@@ -1,24 +1,46 @@
 <% provide(:title, @user.name) %>
-<div class="row">
-  <aside class="col-md-4">
-    <section class="user_info">
-      <h1>
-        <%= gravatar_for @user, size: 50 %>
-        <%= @user.name %>
-      </h1>
-    </section>
-    <section class="stats">
-      <%= render 'shared/stats' %>
-    </section>
-  </aside>
-  <div class="col-md-8">
-    <%= render 'follow_form' if logged_in? %>
-    <% if @user.microposts.any? %>
-      <h3>Microposts (<%= @user.microposts.count %>)</h3>
-      <ol class="microposts">
-        <%= render @microposts %>
-      </ol>
-      <%= paginate @microposts %>
+<h1><%= @year %>年<%= @month %>月の勤務表</h1>
+
+
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th></th><th></th><th>出社</th><th></th><th></th><th>退社</th><th></th><th></th><th></th><th></th>
+    </tr>
+    <tr>
+      <th>日付</th><th>曜日</th><th>時</th><th>分</th><th></th><th>時</th><th>分</th><th></th><th>勤務時間</th><th>備考</th>
+    </tr>
+  </thead>
+  <% each_date_in_month(@year, @month) do |date, index| %>
+  <tbody>
+    <tr>
+      <td><%= date_in_japanese(date, :month_day) %></td>
+      <td><%= day_of_the_week_in_japanese(date, :short) %></td>
+    <% if @time_cards[index] %>
+      <td><%= time_string(@time_cards[index].in_at.hour) %></td>
+      <td><%= time_string(@time_cards[index].in_at.min) %></td>
+      <td></td>
+      <td><%= time_string(@time_cards[index].out_at.hour) %></td>
+      <td><%= time_string(@time_cards[index].out_at.min) %></td>
+      <td></td>
+      <td><%= work_hours(@time_cards[index].work_hours) %></td>
+      <td></td>
+    <% else %>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
     <% end %>
-  </div>
-</div>
+    </tr>    
+  </tbody>
+  <% end %>
+</table>
+
+
+    
+    
