@@ -16,7 +16,7 @@
               <ul class="dropdown-menu">
                 <li><%= link_to "プロフィール", current_user %></li>
                 <li><%= link_to "設定", edit_user_path(current_user) %></li>
-                <!--<li><%#= link_to "勤怠表示画面", edit_user_path(current_user) %></li>-->
+                <li><%= link_to "勤怠表", time_card_path(current_user) %></li>
                 <li class="divider"></li>
                 <li>
                   <%= link_to "ログアウト", logout_path, method: :delete %>

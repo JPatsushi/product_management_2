@@ -1,0 +1,58 @@
+<% provide(:title, @user.name) %>
+<h1><%= @year %>年<%= @month %>月の勤務表<%= @user.name %></h1>
+
+<table class="table table-bordered">
+    <tbody>
+        <tr>
+            <td>時間管理表</td><td>指定勤務時間</td><td colspan="2">基本時間</td><td>初日</td>
+        </tr>
+        <tr>
+            <td>所属</td><td>氏名</td><td>コード</td><td>出勤日数</td><td>締め</td>
+        </tr>
+    </tbody>
+</table>
+
+
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th></th><th></th><th colspan="3">出社</th><th colspan="3">退社</th><th></th><th></th>
+    </tr>
+    <tr>
+      <th>日付</th><th>曜日</th><th>時</th><th>分</th><th></th><th>時</th><th>分</th><th></th><th>勤務時間</th><th>備考</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% each_date_in_month(@year, @month) do |date, index| %>
+    <tr>
+      <td><%= date_in_japanese(date, :month_day) %></td>
+      <td><%= day_of_the_week_in_japanese(date, :short) %></td>
+    <% if @time_cards[index] %>
+      <td><%= time_string(@time_cards[index].in_at) %></td>
+      <td><%= time_string(@time_cards[index].in_at) %></td>
+      <td></td>
+      <td><%= time_string(@time_cards[index].out_at) %></td>
+      <td><%= time_string(@time_cards[index].out_at) %></td>
+      <td></td>
+      <td><%= work_hours(@time_cards[index].work_hours) %></td>
+      <td></td>
+    <% else %>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    <% end %>
+    </tr> 
+    <% end %>
+  </tbody>
+</table>
+
+<%= form_tag(time_card_path, remote: true, method: :patch, id: 'timecard-form', class: 'form-group') do |f| %>
+      <%= submit_tag('出社', name: 'in', id: 'in', disabled: !!@time_card.in_at, class: 'btn btn-default') %>
+      <%= submit_tag('退社', name: 'out', id: 'out', disabled: !@time_card.in_at || !!@time_card.out_at, class: 'btn btn-default') %>
+<% end %>
+    

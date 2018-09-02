@@ -19,13 +19,6 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find(params[:id])
-    # @microposts = @user.microposts.page(params[:page])
-    redirect_to root_url and return unless @user.activated? #まだよくわからない
-    today = Date.today
-    @year = today.year
-    @month = today.month
-    @time_cards = monthly_time_cards(current_user, @year, @month)
-    
   end
   
   def new
@@ -105,13 +98,4 @@ class UsersController < ApplicationController
       params.require(:q).permit(:name_cont)
     end
     
-    def monthly_time_cards(user, year, month)
-      number_of_days_in_month = Date.new(year, month, 1).next_month.prev_day.day
-      results = Array.new(number_of_days_in_month) # 月の日数分nilで埋めた配列を用意
-      time_cards = TimeCard.monthly(user, year, month)
-      time_cards.each do |card|
-        results[card.day - 1] = card
-      end
-      results
-    end
 end
