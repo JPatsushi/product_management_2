@@ -1,0 +1,23 @@
+<% provide(:title, "Renew information") %>
+<h1>基本情報の更新</h1>
+
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <%= form_for(@time_info, url: time_cards_path) do |f| %>
+      <%= render 'shared/error_messages', object: f.object %>
+
+      <%= f.label :must_work_time %>
+      <%= f.time_field :must_work_time,
+      # value: "%H:%M",
+      # min: '00:00:00',
+      # max: '23:59:59',
+      class: 'form-control' %>
+
+      <%= f.label :sd_work_time %>
+      <%= f.time_field :sd_work_time, class: 'form-control' %>
+
+      <%= f.submit "編集", class: "btn btn-primary" %>
+    <% end %>
+
+  </div>
+</div>

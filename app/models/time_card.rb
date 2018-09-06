@@ -7,6 +7,8 @@ class TimeCard < ApplicationRecord
   validate :valid_date
   validates :in_at, presence: true, if: lambda { |m| !m.out_at.nil? }
   validate :out_at_is_later_than_in_at
+  
+  # attr_accessor :must_work_time, :sd_work_time
 
   class << self
     # 今日のタイムカードを取得する

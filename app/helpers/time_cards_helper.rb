@@ -55,8 +55,12 @@ module TimeCardsHelper
   end
 
   # 00:00 形式の時間を返す
-  def time_string(time)
-    time ? time.strftime('%H:%M') : ''
+  def time_string_hour(time)
+    time ? time.strftime('%H') : ''
+  end
+  
+  def time_string_min(time)
+    time ? time.strftime('%M') : ''
   end
 
   # 00:00 形式の勤務時間を返す

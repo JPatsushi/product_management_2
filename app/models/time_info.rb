@@ -1,0 +1,2 @@
+class TimeInfo < ApplicationRecord
+end
