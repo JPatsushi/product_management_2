@@ -2,6 +2,7 @@ class TimeCardsController < ApplicationController
 
  before_action :logged_in_user
  before_action :correct_but_admin_user, only: [:show]
+ before_action :admin_user, only: [:new, :create]
   
   def show
     @user = User.find(params[:id])
@@ -13,11 +14,12 @@ class TimeCardsController < ApplicationController
     @first_day = Date.new(@year, @month, 1)
     @last_day = Date.new(@year, @month, 1).next_month.prev_day
     @time_info = TimeInfo.all.last
-    
+    @time_cards_count = all_time_cards_for_count(@user)
+    @user_time_cards = TimeCard.where(user: @user)
     store(@year,@month)
   end
   
-  def update
+  def updata
     @user = User.find(params[:id])
     @time_card = TimeCard.today(@user)
     ajax_show_action
@@ -31,15 +33,58 @@ class TimeCardsController < ApplicationController
   
   def create
     
-    # @time_info = TimeInfo.new(must_work_time: params[:must_work_time], sd_work_time: params[:sd_work_time])
+    # これは使えない @time_info = TimeInfo.new(must_work_time: params[:must_work_time], sd_work_time: params[:sd_work_time])
      @time_info = TimeInfo.new(time_info_params)
     if @time_info.save
       redirect_to current_user
-    else
-      redirect_to root_path
     end
 
   end
+  
+  def edit
+    # if request.post?
+      
+    # else
+      @user = User.find(params[:id])
+      @year = session[:year]
+      @month = session[:month]
+      @time_cards = monthly_time_cards(@user, @year, @month)
+    # end
+  end
+  
+  def update
+       @user = User.find(params[:id])
+       @year = session[:year]
+       @month = session[:month]
+       number_of_days_in_month = Date.new(@year, @month, 1).next_month.prev_day.day
+      # @time_cards = monthly_time_cards(@user, @year, @month)
+       (1..number_of_days_in_month).each do |number|
+        s = (number - 1).to_s
+
+       condition = { user: @user, year: @year, month: @month, day: number }
+       if time_card = TimeCard.find_by(condition)
+          # time_card.update_attributes(time_cards_params)
+         if !params[:time_cards][s][:in_at].empty?
+           time_card.in_at = params[:time_cards][s][:in_at]
+           time_card.save
+         end
+       else
+         time_card = TimeCard.new(condition)
+         if !params[:time_cards][s][:in_at].empty?
+          # time_card.update_attributes(time_cards_params)
+           time_card.in_at = params[:time_cards][s][:in_at]
+           time_card.save
+         end
+       end
+        
+       
+     end
+       
+     
+       redirect_to @user
+
+  end
+  
   
   
   def add
@@ -55,6 +100,8 @@ class TimeCardsController < ApplicationController
     @time_cards = monthly_time_cards(@user, @year, @month)
     store(@year,@month)
     @time_card = TimeCard.today(@user)
+    @time_info = TimeInfo.all.last
+    @time_cards_count = all_time_cards_for_count(@user)
     render 'show'  
   end
   
@@ -71,6 +118,8 @@ class TimeCardsController < ApplicationController
     @time_cards = monthly_time_cards(@user, @year, @month)
     store(@year,@month)
     @time_card = TimeCard.today(@user)
+    @time_info = TimeInfo.all.last
+    @time_cards_count = all_time_cards_for_count(@user)
     render 'show'  
   end
   
@@ -81,6 +130,11 @@ class TimeCardsController < ApplicationController
   
 
   private
+  
+    def time_cards_params
+      params.require(:time_cards).permit(:in_at)
+                                  
+    end
 
     # 指定年月の全ての日のタイムカードの配列を取得する（タイムカードが存在しない日はnil）
     def monthly_time_cards(user, year, month)
@@ -91,6 +145,17 @@ class TimeCardsController < ApplicationController
         results[card.day - 1] = card
       end
       results
+    end
+    
+    def all_time_cards_for_count(user)
+      time_cards = TimeCard.where(user: user)
+      count = 0
+      time_cards.each do |card|
+        if card.in_at && card.out_at
+          count = count + 1
+        end
+      end
+      count
     end
 
     # Ajaxでshowアクションが呼ばれた場合のハンドラ
@@ -120,7 +185,10 @@ class TimeCardsController < ApplicationController
     
     def time_info_params
       params.require(:time_info).permit(:must_work_time,:sd_work_time) 
-                                   
+    end
+    
+    def admin_user
+      redirect_to(root_url) unless current_user.admin?
     end
 
 end

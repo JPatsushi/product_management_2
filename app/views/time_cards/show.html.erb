@@ -20,11 +20,14 @@
             <td>初日 <%= @first_day.month %>/<%= @first_day.day %></td>
         </tr>
         <tr>
-            <td>所属</td><td>氏名 <%= @user.name %></td><td>コード</td><td>出勤日数</td><td>締め <%= @last_day.month %>/<%= @last_day.day %></td>
+            <td>所属</td><td>氏名 <%= @user.name %></td><td>コード</td><td>出勤日数 <%= @time_cards_count %>日</td><td>締め <%= @last_day.month %>/<%= @last_day.day %></td>
         </tr>
     </tbody>
 </table>
-
+<div><%= link_to edit_time_card_path do %>
+        <button class= "btn btn-primary btn-lg active">勤怠を編集</button>
+     <% end %>
+</div>
 
 <table class="table table-bordered table-striped">
   <thead>
@@ -61,10 +64,22 @@
     <% end %>
     </tr> 
     <% end %>
+    <tr>
+      <td colspan="2"><% if @time_info %><%= @time_info.sd_work_time*@time_cards_count %><% end %></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <% total_time = total_work_time(@user_time_cards) %>
+      <td><%= work_hours(total_time) %></td>
+      <td></td>
+    </tr>
   </tbody>
 </table>
 
-<%= form_tag(time_card_path, remote: true, method: :patch, id: 'timecard-form', class: 'form-group') do |f| %>
+<%= form_tag(updata_time_card_path, remote: true, method: :patch, id: 'timecard-form', class: 'form-group') do |f| %>
       <%= submit_tag('出社', name: 'in', id: 'in', disabled: !!@time_card.in_at, class: 'btn btn-primary') %>
       <%= submit_tag('退社', name: 'out', id: 'out', disabled: !@time_card.in_at || !!@time_card.out_at, class: 'btn btn-success') %>
 <% end %>

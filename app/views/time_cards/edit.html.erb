@@ -1,0 +1,54 @@
+<% provide(:title, "Edit data") %>
+<h1>勤怠資料の更新</h1>
+
+
+    <!--<#%= form_for(@time_cards, url: time_card_path) do |pf| %>-->
+    
+    <%= form_for time_card_path, url: { action: "update" } do |pf| %>
+      <!--<#% pf.object.each do |f| %>-->
+      <!--<#% pf.fields_for f do |card| %>-->
+      <!--<#% end %>-->
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>日付</th><th>曜日</th><th>出社</th><th>退社</th><th>勤務時間</th><th>備考</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--<#% each_date_in_month2(@year, @month, @time_cards) do |date, index, card| %>-->
+      <% each_date_in_month2(@year, @month, @time_cards) do |date, index, card| %>
+      <!--<#% @time_cards.each do |card| %> -->
+        <%= fields_for "time_cards[#{index}]", card do |f| %>
+      <tr>
+        <td><%= date_in_japanese(date, :month_day) %></td>
+        <td><%= day_of_the_week_in_japanese(date, :short) %></td>
+      <!--<#% if @time_cards[index] %>-->
+        <td><%= f.time_field :in_at, class: 'form-control' %></td>
+        <td></td>
+        <td></td>
+        <td></td>
+
+    <!--<#% else %>-->
+    <!--  <td></td>-->
+    <!--  <td></td>-->
+    <!--  <td></td>-->
+    <!--  <td></td>-->
+    <!--  <td></td>-->
+    <!--  <td></td>-->
+    <!--<#% end %>-->
+      </tr> 
+      <% end %>
+      
+     <% end %>
+    </tbody>
+  </table>
+
+
+    <!--  <#%= f.label :must_work_time %>-->
+    <!--  <#%= f.time_field :must_work_time,class: 'form-control' %>-->
+
+    <!--  <#%= f.label :sd_work_time %>-->
+    <!--  <#%= f.time_field :sd_work_time, class: 'form-control' %>-->
+        
+      <%= pf.submit "編集", class: "btn btn-primary" %>
+    <% end %>

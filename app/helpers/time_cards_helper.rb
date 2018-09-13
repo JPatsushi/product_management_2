@@ -53,6 +53,15 @@ module TimeCardsHelper
       date = date.next_day
     end
   end
+  
+  def each_date_in_month2(year, month, card)
+    date = Date.new(year, month, 1)
+
+    while date.month == month do
+      yield date, date.day - 1, card[date.day - 1]
+      date = date.next_day
+    end
+  end
 
   # 00:00 形式の時間を返す
   def time_string_hour(time)
@@ -71,3 +80,11 @@ module TimeCardsHelper
     '%02d' % hours + ':' '%02d' % minutes
   end
 end
+
+  def total_work_time(user_time_cards)
+    sum = 0
+    user_time_cards.each do |card|
+    sum = sum + card.work_hours
+    end
+    sum
+  end

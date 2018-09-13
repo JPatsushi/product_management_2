@@ -11,14 +11,12 @@ Rails.application.routes.draw do
   post   '/login',   to: 'sessions#create'
   delete '/logout',  to: 'sessions#destroy'
   
-  # patch '/plus', to: 'time_cards#add'
-  
-  # resources :time_infos
   
   
   resources :time_cards do
     member do
-      patch :add ,:subtract
+      patch :add, :subtract, :updata
+      post :update
     end
   end
   
