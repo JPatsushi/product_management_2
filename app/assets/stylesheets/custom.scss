@@ -345,6 +345,8 @@ span.picture {
    }
 }
 
+/* for table  */
+
 tbody:nth-child(even) {
     background-color: #EEFFFF
 }
@@ -360,9 +362,54 @@ thead {
   
 }
 
-.form-group {
-  width: 80px;
-  .btn {
+
+.table > tbody > tr > td {
+  vertical-align: middle;
+}
+
+.edit_timecards_form input {
+  margin-bottom: 0px;
+
+}
+
+.edit_button {
+  width: 20%;
+}
+  
+
+  
+.button-centering {
+  text-align: center;
+}
+
+// .base {
+//   position: absolute;
+  
+.show_button {
+  float: left;
+  position: relative;
+  bottom: 920px;
+  left: 400px;
+  width: 10%;
+  div {
+    position: relative;
     
   }
-}
+  .show_button1 {
+    height: 30px;
+    line-height: 40px;
+    font-size: 20px;
+  }
+  .show_button2 {
+    position: absolute;
+    bottom: 0px;
+    left: 130px;
+    line-height: 40px;
+    font-size: 20px;
+  }
+
+
+	
+ }
+
+

@@ -71,6 +71,38 @@ module TimeCardsHelper
   def time_string_min(time)
     time ? time.strftime('%M') : ''
   end
+  
+  def time_string(time)
+    time ? time.strftime('%H:%M') : ''
+  end
+  
+  def time_string_10digits(time)
+    hour = time.hour
+    min = time.min
+    min = min/0.06
+    min = min*0.1
+    min = min.round(0)
+    min = min*0.01
+    sum = hour + min
+    "#{sum}"
+  end
+  
+  #秒で受けて10段階で返す
+  def work_hours_10digits(time)
+    hour = time / 3600
+    hour = hour.round(2)
+    # remaining = time%3600
+    # remaining = remaining/6
+    # remaining = remaining*0.1
+    # remaining = remaining.round(0)
+    # #分に変更完了、次は10段階
+    # remaining = remaining/0.06
+    # remaining = remaining*0.1
+    # remaining = remaining.round(0)
+    # remaining = remaining*0.01
+    # sum = hour + remaining
+    "#{hour}"
+  end
 
   # 00:00 形式の勤務時間を返す
   def work_hours(second)
@@ -88,3 +120,13 @@ end
     end
     sum
   end
+  
+  def total_standard_work_time(time,day)
+    hour = time.hour
+    min = time.min
+    total_second = (hour * 3600 + min * 60) * 1.0
+    total_second = total_second * day
+    work_hours_10digits(total_second)
+  end
+  
+  

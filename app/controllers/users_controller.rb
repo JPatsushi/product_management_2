@@ -77,7 +77,7 @@ class UsersController < ApplicationController
 
     def user_params
       params.require(:user).permit(:name, :email, :password,
-                                   :password_confirmation) #adminを追加してもREDにならなかった。
+                                   :password_confirmation, :depart) #adminを追加してもREDにならなかった。
                                    
     end
     

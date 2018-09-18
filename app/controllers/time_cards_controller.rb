@@ -24,7 +24,7 @@ class TimeCardsController < ApplicationController
     @time_card = TimeCard.today(@user)
     ajax_show_action
     # render 'show'
-    redirect_to current_user
+    redirect_to time_card_path(@user)
   end
   
   def new
@@ -45,40 +45,40 @@ class TimeCardsController < ApplicationController
     # if request.post?
       
     # else
-      @user = User.find(params[:id])
-      @year = session[:year]
-      @month = session[:month]
-      @time_cards = monthly_time_cards(@user, @year, @month)
+    @user = User.find(params[:id])
+    @year = session[:year]
+    @month = session[:month]
+    @time_cards = monthly_time_cards(@user, @year, @month)
     # end
   end
   
   def update
-       @user = User.find(params[:id])
-       @year = session[:year]
-       @month = session[:month]
-       number_of_days_in_month = Date.new(@year, @month, 1).next_month.prev_day.day
-      # @time_cards = monthly_time_cards(@user, @year, @month)
-       (1..number_of_days_in_month).each do |number|
-        s = (number - 1).to_s
+    @user = User.find(params[:id])
+    @year = session[:year]
+    @month = session[:month]
+    number_of_days_in_month = Date.new(@year, @month, 1).next_month.prev_day.day
+    # @time_cards = monthly_time_cards(@user, @year, @month)
+    (1..number_of_days_in_month).each do |number|
+     s = (number - 1).to_s
 
-       condition = { user: @user, year: @year, month: @month, day: number }
-       if time_card = TimeCard.find_by(condition)
-          # time_card.update_attributes(time_cards_params)
-         if !params[:time_cards][s][:in_at].empty?
-           time_card.in_at = params[:time_cards][s][:in_at]
-           time_card.save
-         end
-       else
-         time_card = TimeCard.new(condition)
-         if !params[:time_cards][s][:in_at].empty?
-          # time_card.update_attributes(time_cards_params)
-           time_card.in_at = params[:time_cards][s][:in_at]
-           time_card.save
-         end
-       end
+      condition = { user: @user, year: @year, month: @month, day: number }
+      if time_card = TimeCard.find_by(condition)
+        # time_card.update_attributes(time_cards_params)
+        time_card.in_at = params[:time_cards][s][:in_at] if !params[:time_cards][s][:in_at].empty?
+        time_card.out_at = params[:time_cards][s][:out_at] if !params[:time_cards][s][:out_at].empty?
+        time_card.remark = params[:time_cards][s][:remark] if !params[:time_cards][s][:remark].empty?
+        time_card.save
+       
+      else
+        time_card = TimeCard.new(condition)
+        time_card.in_at = params[:time_cards][s][:in_at] if !params[:time_cards][s][:in_at].empty?
+        time_card.out_at = params[:time_cards][s][:out_at] if !params[:time_cards][s][:out_at].empty?
+        time_card.remark = params[:time_cards][s][:remark] if !params[:time_cards][s][:remark].empty?
+        time_card.save
+      end
         
        
-     end
+    end
        
      
        redirect_to @user
@@ -102,7 +102,8 @@ class TimeCardsController < ApplicationController
     @time_card = TimeCard.today(@user)
     @time_info = TimeInfo.all.last
     @time_cards_count = all_time_cards_for_count(@user)
-    render 'show'  
+    @user_time_cards = TimeCard.where(user: @user)
+    render 'show'
   end
   
   def subtract
@@ -120,6 +121,7 @@ class TimeCardsController < ApplicationController
     @time_card = TimeCard.today(@user)
     @time_info = TimeInfo.all.last
     @time_cards_count = all_time_cards_for_count(@user)
+    @user_time_cards = TimeCard.where(user: @user)
     render 'show'  
   end
   
@@ -132,7 +134,7 @@ class TimeCardsController < ApplicationController
   private
   
     def time_cards_params
-      params.require(:time_cards).permit(:in_at)
+      params.require(:time_cards).permit(:in_at, :out_at)
                                   
     end
 

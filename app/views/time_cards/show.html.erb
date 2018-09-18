@@ -1,5 +1,6 @@
 <% provide(:title, @user.name) %>
 
+
 <table class="table table-bordered">
     <tbody>
         <tr>
@@ -12,15 +13,12 @@
                 <i class="fas fa-angle-right"></i>
               <% end %>
             </td>
-              <td>指定勤務時間<% if @time_info %>
-              <%= @time_info.must_work_time%>
-              <% end %>
-            </td>
-            <td colspan="2"><% if @time_info %><%= @time_info.sd_work_time%><% end %> 基本時間</td>
+              <td>指定勤務時間 <% if @time_info %><%= time_string_10digits(@time_info.must_work_time) %><% end %></td>
+            <td colspan="2"><% if @time_info %><%= time_string_10digits(@time_info.sd_work_time) %><% end %> 基本時間</td>
             <td>初日 <%= @first_day.month %>/<%= @first_day.day %></td>
         </tr>
         <tr>
-            <td>所属</td><td>氏名 <%= @user.name %></td><td>コード</td><td>出勤日数 <%= @time_cards_count %>日</td><td>締め <%= @last_day.month %>/<%= @last_day.day %></td>
+            <td>所属 <%= @user.depart %></td><td>氏名 <%= @user.name %></td><td>コード</td><td>出勤日数 <%= @time_cards_count %>日</td><td>締め <%= @last_day.month %>/<%= @last_day.day %></td>
         </tr>
     </tbody>
 </table>
@@ -51,7 +49,7 @@
       <td><%= time_string_min(@time_cards[index].out_at) %></td>
       <td></td>
       <td><%= work_hours(@time_cards[index].work_hours) %></td>
-      <td></td>
+      <td><%= @time_cards[index].remark%></td>
     <% else %>
       <td></td>
       <td></td>
@@ -65,7 +63,11 @@
     </tr> 
     <% end %>
     <tr>
-      <td colspan="2"><% if @time_info %><%= @time_info.sd_work_time*@time_cards_count %><% end %></td>
+      <% if @time_info %>
+        <td colspan="2"><%= total_standard_work_time(@time_info.sd_work_time,@time_cards_count) %></td>
+      <% else %>
+        <td colspan="2"><%= 0 %></td>
+      <% end %>
       <td></td>
       <td></td>
       <td></td>
@@ -73,14 +75,16 @@
       <td></td>
       <td></td>
       <% total_time = total_work_time(@user_time_cards) %>
-      <td><%= work_hours(total_time) %></td>
+      <td><%= work_hours_10digits(total_time) %></td>
       <td></td>
     </tr>
   </tbody>
 </table>
 
-<%= form_tag(updata_time_card_path, remote: true, method: :patch, id: 'timecard-form', class: 'form-group') do |f| %>
-      <%= submit_tag('出社', name: 'in', id: 'in', disabled: !!@time_card.in_at, class: 'btn btn-primary') %>
-      <%= submit_tag('退社', name: 'out', id: 'out', disabled: !@time_card.in_at || !!@time_card.out_at, class: 'btn btn-success') %>
+<%= form_tag(updata_time_card_path, remote: true, method: :patch, id: 'timecard-form', class: 'form-group show_button') do |f| %>
+    <div>
+      <%= submit_tag('出社', name: 'in', id: 'in', disabled: !!@time_card.in_at, class: 'btn btn-primary show_button1') %>
+      <%= submit_tag('退社', name: 'out', id: 'out', disabled: !@time_card.in_at || !!@time_card.out_at, class: 'btn btn-success show_button2') %>
+    </div>
 <% end %>
     
