@@ -1,6 +1,6 @@
 module TimeCardsHelper
   # 日付の日本語表現を取得する
-  def date_in_japanese(date = Date.today, format = :full)
+  def date_in_japanese(date, format = :full)
     case format
     when :full
       "#{date.year}年#{date.month}月#{date.day}日 #{day_of_the_week_in_japanese(date)}"
@@ -33,16 +33,16 @@ module TimeCardsHelper
   end
 
   # 勤務状況を取得する
-  def working_status(time_card)
-    case time_card.working_status
-    when :not_arrived
-      '未出社'
-    when :working
-      '勤務中'
-    when :left
-      '退社済'
-    end  
-  end
+  # def working_status(time_card)
+  #   case time_card.working_status
+  #   when :not_arrived
+  #     '未出社'
+  #   when :working
+  #     '勤務中'
+  #   when :left
+  #     '退社済'
+  #   end  
+  # end
 
   # 指定した年月の1日から月末までの日付とインデックスを引数としてブロックを実行する
   def each_date_in_month(year, month)

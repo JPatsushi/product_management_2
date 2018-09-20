@@ -299,35 +299,6 @@ span.picture {
   }
 }
 
-/* checklist */
-.item {
-	border-bottom: 1px solid #e7e7e7;
-	padding-bottom: 1.5em;
-	.item-title {
-		
-		margin-top: 0;
-	}
-	.item-desc {
-		font-size: 1em;
-	}
-	.time-ago {
-		color: darken(#e7e7e7, 50%);
-		font-size: 0.85em;
-		letter-spacing: 1.25;
-	}
-	.item-sub-title {
-		margin-bottom: 0;
-	}
-}
-
-.item:nth-child(n+1) {
-	padding-top: 1.5em;
-}
-
-.item:last-child {
-	border-bottom: 0px solid #e7e7e7;
-}
-
 /* for search  */
 
 .search_form {
@@ -376,40 +347,42 @@ thead {
   width: 20%;
 }
   
-
-  
 .button-centering {
   text-align: center;
 }
 
-// .base {
-//   position: absolute;
-  
-.show_button {
-  float: left;
+/* for 出社　退社　ボタン */
+
+
+.container {
   position: relative;
-  bottom: 920px;
-  left: 400px;
-  width: 10%;
-  div {
-    position: relative;
+}
+
+
+
+.show_button {
+    position: absolute;
+    left: 438px;
+    top: 383px;
+    width: 100px;
+    height: 0px;
     
-  }
+    
   .show_button1 {
-    height: 30px;
+    
     line-height: 40px;
     font-size: 20px;
+    position: relative;
   }
   .show_button2 {
-    position: absolute;
-    bottom: 0px;
-    left: 130px;
-    line-height: 40px;
-    font-size: 20px;
+   line-height: 40px;
+   font-size: 20px;
+   position: absolute;
+   left: 120px;
+   bottom: -54px;
   }
+ 
+}
 
-
-	
- }
 
 

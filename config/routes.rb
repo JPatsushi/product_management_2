@@ -11,8 +11,6 @@ Rails.application.routes.draw do
   post   '/login',   to: 'sessions#create'
   delete '/logout',  to: 'sessions#destroy'
   
-  
-  
   resources :time_cards do
     member do
       patch :add, :subtract, :updata
@@ -20,20 +18,8 @@ Rails.application.routes.draw do
     end
   end
   
-  resources :items do
-    member do
-      patch :complete
-    end
-  end
-  
-  resources :users do
-    member do
-      get :following, :followers
-    end
-  end
-  
+  resources :users 
   resources :account_activations, only: [:edit]
   resources :password_resets,     only: [:new, :create, :edit, :update]
-  resources :microposts,          only: [:create, :destroy]
   resources :relationships,       only: [:create, :destroy]
 end

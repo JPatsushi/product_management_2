@@ -4,11 +4,19 @@ class TimeCardsController < ApplicationController
  before_action :correct_but_admin_user, only: [:show]
  before_action :admin_user, only: [:new, :create]
   
+  
   def show
     @user = User.find(params[:id])
-    today = Date.today
-    @year = today.year
-    @month = today.month
+  
+    if session[:month] 
+      @year = session[:year]
+      @month = session[:month]
+    else
+      today = Time.current
+      @year = today.year
+      @month = today.month
+    end
+    
     @time_cards = monthly_time_cards(@user, @year, @month)
     @time_card = TimeCard.today(@user)
     @first_day = Date.new(@year, @month, 1)
@@ -42,14 +50,10 @@ class TimeCardsController < ApplicationController
   end
   
   def edit
-    # if request.post?
-      
-    # else
     @user = User.find(params[:id])
     @year = session[:year]
     @month = session[:month]
     @time_cards = monthly_time_cards(@user, @year, @month)
-    # end
   end
   
   def update
@@ -95,15 +99,8 @@ class TimeCardsController < ApplicationController
       @year = @year + 1
       @month = 1
     end
-    @first_day = Date.new(@year, @month, 1)
-    @last_day = Date.new(@year, @month, 1).next_month.prev_day
-    @time_cards = monthly_time_cards(@user, @year, @month)
     store(@year,@month)
-    @time_card = TimeCard.today(@user)
-    @time_info = TimeInfo.all.last
-    @time_cards_count = all_time_cards_for_count(@user)
-    @user_time_cards = TimeCard.where(user: @user)
-    render 'show'
+    redirect_to time_card_path(@user)
   end
   
   def subtract
@@ -114,20 +111,13 @@ class TimeCardsController < ApplicationController
       @year = @year - 1
       @month = 12
     end
-    @first_day = Date.new(@year, @month, 1)
-    @last_day = Date.new(@year, @month, 1).next_month.prev_day
-    @time_cards = monthly_time_cards(@user, @year, @month)
     store(@year,@month)
-    @time_card = TimeCard.today(@user)
-    @time_info = TimeInfo.all.last
-    @time_cards_count = all_time_cards_for_count(@user)
-    @user_time_cards = TimeCard.where(user: @user)
-    render 'show'  
+    redirect_to time_card_path(@user)
   end
   
   def store(year,month)
-       session[:year] = year
-       session[:month] = month
+      session[:year] = year
+      session[:month] = month
   end
   
 
