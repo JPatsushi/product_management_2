@@ -85,7 +85,7 @@
   <% if @time_card.month == @month && @time_card.year == @year %>
     <% if !@time_card.in_at %>
       <%= submit_tag('出社', name: 'in', id: 'in', disabled: !!@time_card.in_at, class: 'btn btn-primary show_button1') %>
-    <% else %>
+    <% elsif !@time_card.out_at %>
       <%= submit_tag('退社', name: 'out', id: 'out', disabled: !@time_card.in_at || !!@time_card.out_at, class: 'btn btn-success show_button2') %>
     <% end %>
   <% end %>
