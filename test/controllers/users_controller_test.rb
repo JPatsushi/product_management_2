@@ -5,6 +5,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   def setup
     @user = users(:michael)
     @other_user = users(:archer)
+    @other_user_2 = users(:lana)
     @non_activated_user = users(:non_activated) #演習用
   end
   
@@ -67,5 +68,12 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     end
     assert_redirected_to root_url
   end
+  
+  test "should redirect show when non-admin user goes into" do
+    log_in_as(@other_user)
+    get user_path(@other_user_2)
+    assert_redirected_to root_url
+  end
+  
   
 end

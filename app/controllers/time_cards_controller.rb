@@ -1,9 +1,8 @@
 class TimeCardsController < ApplicationController
-
- before_action :logged_in_user
- before_action :correct_but_admin_user, only: [:show]
- before_action :admin_user, only: [:new, :create]
-  
+  before_action :logged_in_user
+  before_action :correct_but_admin_user, only: [:show]
+  before_action :admin_user, only: [:new, :create]
+    
   
   def show
     @user = User.find(params[:id])
@@ -166,14 +165,6 @@ class TimeCardsController < ApplicationController
       #   render json: { status: 'error' }
       # end
     end 
-    
-    def correct_but_admin_user
-      if current_user.admin?
-      else
-        @user = User.find(params[:id])
-        redirect_to(root_url) unless current_user?(@user)
-      end
-    end
     
     def time_info_params
       params.require(:time_info).permit(:must_work_time,:sd_work_time) 

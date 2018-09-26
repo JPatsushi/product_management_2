@@ -95,7 +95,11 @@
   <span id="day"><%= @time_card.day %></span>
 </div>
 
+<!--<div id="hoge" class="hidden" data-water-id="<#%= @time_card.day %>"></div>-->
+
 <script>
-  name = $('#day').text();
-  $("#timecard-form").css("top", 219 + (name - 1) * 37); 
+  day = $('#day').text();
+  $("#timecard-form").css("top", 219 + (day - 1) * 37);
+  // var test = $('#hoge').data('water-id');
+  // document.write(test);
 </script> 
