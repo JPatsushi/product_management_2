@@ -5,7 +5,7 @@ module TimeCardsHelper
     when :full
       "#{date.year}年#{date.month}月#{date.day}日 #{day_of_the_week_in_japanese(date)}"
     when :month_day
-      "#{date.month}月#{date.day}日"
+      "#{date.month}/#{date.day}"
     end
   end
 

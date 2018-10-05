@@ -362,11 +362,10 @@ thead {
 
 .show_button {
     position: absolute;
-    left: 393px;
-    top: 219px;
-    width: 100px;
+    left: 313px;
+    top: 365px;
+    width: 60px;
     height: 0px;
-    
     
   .show_button1 {
     
@@ -378,14 +377,16 @@ thead {
   // line-height: 40px;
   // font-size: 20px;
    position: absolute;
-   left: 230px;
+   left: 150px;
    bottom: -34px;
   }
  
 }
 
 .hidden {
-  display: none
+  display: none;
 }
 
-
+.over_work {
+  // display: inline;
+}
