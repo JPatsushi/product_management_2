@@ -24,6 +24,14 @@ class TimeCardsController < ApplicationController
     @time_cards_count = all_time_cards_for_count(@user)
     @user_time_cards = TimeCard.where(user: @user)
     store(@year,@month)
+    
+    
+    respond_to do |format|
+      format.html {}
+      format.csv do
+       send_data render_to_string, filename: "#{@year}_#{@month}_kintai.csv", type: :csv
+      end
+    end
   end
   
   def updata
