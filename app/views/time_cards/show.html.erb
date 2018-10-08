@@ -31,6 +31,22 @@
         </tr>
     </thead>
 </table>
+
+<% if @user.superior && @authentication_events.count != 0 %>
+  <div> 
+    <span style="color:red;">【所属長承認申請のお知らせ】</span><span style="color:red; border: 3px solid red;"><%= @authentication_events.count %>件の通知があります</span>
+    <p>【勤怠変更申請のお知らせ】</p>
+    <p>【残業申請のお知らせ】</p>
+  </div>
+<% elsif current_user.superior %>
+  <div> 
+    <p>【所属長承認申請のお知らせ】</p>
+    <p>【勤怠変更申請のお知らせ】</p>
+    <p>【残業申請のお知らせ】</p>
+  </div>
+<% else %>
+<% end %>
+
 <div>
   <%= link_to edit_time_card_path do %>
     <button class= "btn btn-primary btn-lg">勤怠を編集</button>
@@ -42,7 +58,6 @@
   <%= link_to edit_time_card_path do %>
     <button class= "btn btn-primary btn-lg">勤怠修正ログ（承認済）</button>
   <% end %>
-  
 </div>
 </br>
 </br>
@@ -129,12 +144,14 @@
       <% total_time = total_work_time(@user_time_cards) %>
       <td style="vertical-align:top;"><%= work_hours_10digits(total_time) %></td>
       <td colspan="5"></td>
+      
+      
       <td>
-        <!--<#% form_for    do |f| %>-->
-        <!--  <#%= f.label :name,"所属長承認　未" %>-->
-        <!--  <#%= f.text_field :name, class: 'form-control' %>-->
-        <!--  <#%= f.submit "申請", class: "btn btn-primary" %>-->
-        <!--<#% end %>-->
+        <%= form_for @monthly_authentication, url: monthly_authentication_path do |f| %>
+        <%= f.label :status,"所属長承認　#{@monthly_authentication.status}" %>
+        <%= select_tag(:superior_man, options_for_select(@superiors_list), class: 'form-control')  %>
+        <%= f.submit "申請", class: "btn btn-primary" %>
+        <% end %>
       </td>
     </tr>
   </tbody>
@@ -167,3 +184,5 @@ $(function() {
 })
 
 </script> 
+
+<!--<@%= render 'static_pages/user_logged_in' %>-->

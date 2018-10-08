@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180913101940) do
+ActiveRecord::Schema.define(version: 20181008040518) do
+
+  create_table "monthly_authentications", force: :cascade do |t|
+    t.string "year"
+    t.string "month"
+    t.integer "certifier"
+    t.integer "user_id"
+    t.string "content"
+    t.string "status", default: "未"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "time_cards", force: :cascade do |t|
     t.integer "year"
@@ -45,6 +56,7 @@ ActiveRecord::Schema.define(version: 20180913101940) do
     t.string "reset_digest"
     t.datetime "reset_sent_at"
     t.string "depart"
+    t.boolean "superior", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

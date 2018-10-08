@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_many :time_cards, dependent: :destroy
+  has_many :monthly_authentications, dependent: :destroy
   
   attr_accessor :remember_token, :activation_token, :reset_token
   

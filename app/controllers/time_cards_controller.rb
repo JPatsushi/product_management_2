@@ -25,6 +25,13 @@ class TimeCardsController < ApplicationController
     @user_time_cards = TimeCard.where(user: @user)
     store(@year,@month)
     
+    @superiors = User.where(superior: true)
+    @superiors_list = superiors(@superiors)
+    
+    @monthly_authentication = authentication_index(@user, @year, @month)
+    
+    @authentication_events = MonthlyAuthentication.where(certifier: @user.id, status: "申請中")
+    
     
     respond_to do |format|
       format.html {}
@@ -181,5 +188,28 @@ class TimeCardsController < ApplicationController
     def admin_user
       redirect_to(root_url) unless current_user.admin?
     end
+    
+    def superiors(superiors)
+      array = []
+      superiors.each_with_index do |superior, index|
+        array[index] = []
+        array[index] << superior.name << superior.id
+      end
+      
+      array
+      
+    end
+    
+    def authentication_index(user,year,month)
+      index = user.monthly_authentications.find_by(year: year, month: month) 
+      index2 = user.monthly_authentications.new(year: year, month: month)
+      if index
+        index
+      else
+        index2.save
+        index2
+      end 
+    end
+    
 
 end
