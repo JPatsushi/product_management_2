@@ -41,6 +41,24 @@ User.create!(name:  "上長B",
               activated_at: Time.zone.now)
 end
 
+user = User.find_by(id:4)
+user.monthly_authentications.create!(year: 2018,
+                                 month: 10,
+                                 certifier: 2,
+                                 status: "申請中"
+                                 )
+user.monthly_authentications.create!(year: 2018,
+                                 month: 11,
+                                 certifier: 2,
+                                 status: "申請中"
+                                 )                                
+user_2 = User.find_by(id:3)
+user_2.monthly_authentications.create!(year: 2018,
+                                 month: 10,
+                                 certifier: 2,
+                                 status: "申請中"
+                                 )
+
 # users = User.order(:created_at).take(6)
 # 50.times do
 #   content = Faker::Lorem.sentence(5)

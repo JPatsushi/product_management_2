@@ -13,6 +13,12 @@ class MonthlyAuthenticationsController < ApplicationController
     redirect_to time_card_path(@user)
   end
   
+  def create
+  
+  
+    
+  end
+  
   private
   
     def monthly_authentication_params
