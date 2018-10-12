@@ -1,25 +1,28 @@
 class TimeCardsController < ApplicationController
   before_action :logged_in_user
-  before_action :correct_but_admin_user, only: [:show]
+  before_action :correct_but_superior_user, only: [:show]
   before_action :admin_user, only: [:new, :create]
     
   
   def show
     
-    if params[:name]
-      name_option = params[:name] #"4_2018_10"
-      name_array = name_option.split("_") #["4","2018","10"]
-      if name_array[1] != nil
-        session[:year] = name_array[1].to_i
-        session[:month] = name_array[2].to_i
-        @user = User.find(name_array[0].to_i)
-      else
-        @user = User.find(params[:id]) 
-      end
-    end
-  
-  
-    if session[:month] && session[:year]
+    @user = User.find(params[:id]) 
+    # byebug
+    # if params[:name]
+    #   name_option = params[:name] #"4_2018_10"
+    #   name_array = name_option.split("_") #["4","2018","10"]
+    #   if name_array[1] != nil
+    #     session[:year] = name_array[1].to_i
+    #     session[:month] = name_array[2].to_i
+    #     @user = User.find(name_array[0].to_i)
+    #   else
+    #     @user = User.find(params[:id]) 
+    #   end
+    # end
+    if params[:year] && params[:month]
+      @year = params[:year].to_i
+      @month = params[:month].to_i
+    elsif session[:month] && session[:year]
       @year = session[:year]
       @month = session[:month]
     else

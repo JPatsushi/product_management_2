@@ -1,18 +1,106 @@
 <% provide(:title, @user.name) %>
 
+<!--<@%= render 'static_pages/user_logged_in' %>-->
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </br>
+        
+        <%= form_for monthly_authentications_path do |pf| %>
+        
+        <% (2..User.all.count - 1).each do |id| %>
+          <% array = [] %>
+          <% @authentication_events.each {|event| array << event if event.user_id == id} %>
+          <% if array != [] %>
+          <h4 style="text-align: center;">【<%= array.first.user.name %>からの一ヶ月分勤怠申請】</h4>
+          <table class="table table-bordered table-striped">
+           <thead>
+             <tr>
+               <th>年</th>
+               <th>月</th>
+               <th>指示者確認</th>
+               <th>変更</th>
+               <th>勤怠を確認する</th>
+             </tr>
+           </thead>
+           <tbody>
+            <% array.each do |obj| %>
+             <%= fields_for "list[#{id}][#{obj.year}_#{obj.month}]", obj do |f| %>  
+             <tr>
+               <td><%= obj.year %></td>
+               <td><%= obj.month %></td>
+               <td class="modal_option"><%= f.select :status, options_for_select([["なし",1],["申請中",2],["承認",3],["否認",4]]) %></td>
+               <td><%= check_box_tag("#{id}_#{obj.year}_#{obj.month}_confirm") %></td>
+               <td><%= link_to button_tag("osu", type: 'button', class: "btn btn-primary"), time_card_path(obj.user, year: obj.year, month: obj.month), :target => "_blank", rel: "noreferrer" %></td>
+             </tr>
+             <% end %>
+            <% end %> 
+           </tbody>
+          </table>
+          <% end %>
+        <% end %>
+        <%= pf.submit "変更を送信する", class: "btn btn-primary" %>
+        <% end %>
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+ <script>
+  $(function(){
+    var modal = document.getElementById('myModal');
+    $("#monthly").click(function(){
+        $("header").css("padding-right", 17);
+    })
+    $(".modal-header span").click(function() {
+        $("header").css("padding-right", 0);
+    })    
+    $(window).click(function(event) {
+        if (event.target == modal) {
+        // $("header").css("background-color", "blue");
+        $("header").css("padding-right", 0);
+        }
+    })
+  })
+ </script>
+
+<script>
+$(function() {
+  
+  var day = $('#day').text();
+  $("#timecard-form").css("top", 365 + (day - 1) * 37);
+  // var test = $('#hoge').data('water-id');
+  // document.write(test);
+ 
+})
+
+</script> 
 
 <table class="table table-bordered">
     <thead>
         <tr>
             <th rowspan="2" style="vertical-align: middle;">
-              <%= link_to subtract_time_card_path, method: :patch, remote: true do %>
-                <button class= "btn btn-primary">←</button>
+              <% if current_user == @user %>
+                <%= link_to subtract_time_card_path, method: :patch, remote: true do %>
+                  <button class= "btn btn-primary">←</button>
+                <% end %>
               <% end %>
               <span>　　</span>
               <%= @year %>年<%= @month %>月 時間管理表
               <span>　　</span>
-              <%= link_to add_time_card_path, method: :patch, remote: true do %>
-                <button class= "btn btn-primary">→</button>
+              <% if current_user == @user %>
+                <%= link_to add_time_card_path, method: :patch, remote: true do %>
+                  <button class= "btn btn-primary">→</button>
+                <% end %>
               <% end %>
             </th>
               <th rowspan="2">指定勤務時間 <% if @time_info %><%= time_string_10digits(@time_info.must_work_time) %><% end %></br>
@@ -32,35 +120,45 @@
     </thead>
 </table>
 
-<% if @user.superior && @authentication_events.count != 0 %>
-  <div> 
-    <span style="color:red;">【所属長承認申請のお知らせ】</span><span style="color:red; border: 3px solid red;"><%= @authentication_events.count %>件の通知があります</span>
-    <p>【勤怠変更申請のお知らせ】</p>
-    <p>【残業申請のお知らせ】</p>
-  </div>
-<% elsif current_user.superior %>
-  <div> 
-    <p>【所属長承認申請のお知らせ】</p>
-    <p>【勤怠変更申請のお知らせ】</p>
-    <p>【残業申請のお知らせ】</p>
-  </div>
-<% else %>
+<!--<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">-->
+<!--  【所属長承認申請のお知らせ】-->
+<!--</button>-->
+<% if current_user == @user %>
+  <% if @user.superior && @authentication_events.count != 0 %>
+    <div>
+      <button id="monthly" style="color:red;" data-toggle="modal" data-target="#myModal">
+         【所属長承認申請のお知らせ】
+      </button>
+      <span style="color:red; border: 3px solid red;"><%= @authentication_events.count %>件の通知があります</span>
+      <p>【勤怠変更申請のお知らせ】</p>
+      <p>【残業申請のお知らせ】</p>
+    </div>
+  <% elsif current_user.superior %>
+    <div> 
+      <p>【所属長承認申請のお知らせ】</p>
+      <p>【勤怠変更申請のお知らせ】</p>
+      <p>【残業申請のお知らせ】</p>
+    </div>
+  <% else %>
+  <% end %>
 <% end %>
 
-<div>
-  <%= link_to edit_time_card_path do %>
-    <button class= "btn btn-primary btn-lg">勤怠を編集</button>
-  <% end %>
-  <%= link_to time_card_path(format: :csv) do %>
-    <button class= "btn btn-primary btn-lg">CSV出力</button>
-  <% end %>
+<% if current_user == @user %>
+  <div>
+    <%= link_to edit_time_card_path do %>
+      <button class= "btn btn-primary btn-lg">勤怠を編集</button>
+    <% end %>
+    <%= link_to time_card_path(format: :csv) do %>
+      <button class= "btn btn-primary btn-lg">CSV出力</button>
+    <% end %>
+    </br>
+    <%= link_to edit_time_card_path do %>
+      <button class= "btn btn-primary btn-lg">勤怠修正ログ（承認済）</button>
+    <% end %>
+  </div>
   </br>
-  <%= link_to edit_time_card_path do %>
-    <button class= "btn btn-primary btn-lg">勤怠修正ログ（承認済）</button>
-  <% end %>
-</div>
-</br>
-</br>
+  </br>
+<% end %>
 
 <table class="table table-bordered table-striped">
   <thead>
@@ -95,9 +193,10 @@
   <tbody>
     <% each_date_in_month(@year, @month) do |date, index| %>
     <tr>
-      <td>
-         <%= link_to edit_time_card_path do %>
-           <button class= "btn btn-primary over_work">残業申請</button>
+      <td><% if current_user == @user %>
+           <%= link_to edit_time_card_path do %>
+             <button class= "btn btn-primary over_work">残業申請</button>
+           <% end %>
          <% end %>
       </td>
       <td><%= date_in_japanese(date, :month_day) %></td>
@@ -135,9 +234,9 @@
     <% end %>
     <tr>
       <% if @time_info %>
-        <td style="height:123px; vertical-align:top;"><%= total_standard_work_time(@time_info.sd_work_time,@time_cards_count) %></td>
+        <td style="vertical-align:top;"><%= total_standard_work_time(@time_info.sd_work_time,@time_cards_count) %></td>
       <% else %>
-        <td style="height:123px; vertical-align:top;"><%= 0 %></td>
+        <td style="vertical-align:top;"><%= 0 %></td>
       <% end %>
       <td colspan="2"></td>
       <td colspan="6"></td>
@@ -149,20 +248,23 @@
       <td>
         <%= form_for @monthly_authentication, url: monthly_authentication_path do |f| %>
         <%= f.label :status,"所属長承認　#{@monthly_authentication.status}" %>
-        <%= select_tag(:superior_man, options_for_select(@superiors_list), class: 'form-control')  %>
-        <%= f.submit "申請", class: "btn btn-primary" %>
+        <% if current_user == @user %>
+          <%= select_tag(:superior_man, options_for_select(@superiors_list), class: 'form-control')  %>
+          <%= f.submit "申請", class: "btn btn-primary" %>
+          <% end %>
         <% end %>
       </td>
     </tr>
   </tbody>
 </table>
-
-<%= form_tag(updata_time_card_path, remote: true, method: :patch, id: 'timecard-form', class: 'form-group show_button') do |f| %>
-  <% if @time_card.month == @month && @time_card.year == @year %>
-    <% if !@time_card.in_at %>
-      <%= submit_tag('出社', name: 'in', id: 'in', disabled: !!@time_card.in_at, class: 'btn btn-primary show_button1') %>
-    <% elsif !@time_card.out_at %>
-      <%= submit_tag('退社', name: 'out', id: 'out', disabled: !@time_card.in_at || !!@time_card.out_at, class: 'btn btn-success show_button2') %>
+<% if current_user == @user %>
+  <%= form_tag(updata_time_card_path, remote: true, method: :patch, id: 'timecard-form', class: 'form-group show_button') do |f| %>
+    <% if @time_card.month == @month && @time_card.year == @year %>
+      <% if !@time_card.in_at %>
+        <%= submit_tag('出社', name: 'in', id: 'in', disabled: !!@time_card.in_at, class: 'btn btn-primary show_button1') %>
+      <% elsif !@time_card.out_at %>
+        <%= submit_tag('退社', name: 'out', id: 'out', disabled: !@time_card.in_at || !!@time_card.out_at, class: 'btn btn-success show_button2') %>
+      <% end %>
     <% end %>
   <% end %>
 <% end %>
@@ -173,73 +275,8 @@
 
 <!--<div id="hoge" class="hidden" data-water-id="<#%= @time_card.day %>"></div>-->
 
-<script>
-$(function() {
-  
-  var day = $('#day').text();
-  $("#timecard-form").css("top", 365 + (day - 1) * 37);
-  // var test = $('#hoge').data('water-id');
-  // document.write(test);
-  
-})
 
-</script> 
 
-<!--<@%= render 'static_pages/user_logged_in' %>-->
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-  Launch demo modal
-</button>
 
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        </br>
-        
-        <%= form_for monthly_authentications_path do |pf| %>
-        
-        <% (2..User.all.count - 1).each do |id| %>
-          <% array = [] %>
-          <% @authentication_events.each {|event| array << event if event.user_id == id} %>
-          <% if array != [] %>
-          <h4 style="text-align: center;">【<%= array.first.user.name %>からの一ヶ月分勤怠申請】</h4>
-          <table class="table table-bordered table-striped">
-           <thead>
-             <tr>
-               <th>年</th>
-               <th>月</th>
-               <th>指示者確認</th>
-               <th>変更</th>
-               <th>勤怠を確認する</th>
-             </tr>
-           </thead>
-           <tbody>
-            <% array.each do |obj| %>
-             <%= fields_for "list[#{id}][#{obj.year}_#{obj.month}]", obj do |f| %>  
-             <tr>
-               <td><%= obj.year %></td>
-               <td><%= obj.month %></td>
-               <td class="modal_option"><%= f.select :status, options_for_select([["なし",1],["申請中",2],["承認",3],["否認",4]]) %></td>
-               <td><%= check_box_tag("#{id}_#{obj.year}_#{obj.month}_confirm") %></td>
-               <td><%= link_to time_card_path(obj.user) do %><button name: "<%= "#{id}_#{obj.year}_#{obj.month}" %>", class= "btn btn-primary ">確認</button><% end %></td>
-             </tr>
-             <% end %>
-            <% end %> 
-           </tbody>
-          </table>
-          <% end %>
-        <% end %>
-        <%= pf.submit "変更を送信する", class: "btn btn-primary" %>
-        <% end %>
-       
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
+
+
