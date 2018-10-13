@@ -1,77 +1,6 @@
 <% provide(:title, @user.name) %>
 
-<!--<@%= render 'static_pages/user_logged_in' %>-->
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        </br>
-        
-        <%= form_for monthly_authentications_path do |pf| %>
-        
-        <% (2..User.all.count - 1).each do |id| %>
-          <% array = [] %>
-          <% @authentication_events.each {|event| array << event if event.user_id == id} %>
-          <% if array != [] %>
-          <h4 style="text-align: center;">【<%= array.first.user.name %>からの一ヶ月分勤怠申請】</h4>
-          <table class="table table-bordered table-striped">
-           <thead>
-             <tr>
-               <th>年</th>
-               <th>月</th>
-               <th>指示者確認</th>
-               <th>変更</th>
-               <th>勤怠を確認する</th>
-             </tr>
-           </thead>
-           <tbody>
-            <% array.each do |obj| %>
-             <%= fields_for "list[#{id}][#{obj.year}_#{obj.month}]", obj do |f| %>  
-             <tr>
-               <td><%= obj.year %></td>
-               <td><%= obj.month %></td>
-               <td class="modal_option"><%= f.select :status, options_for_select([["なし",1],["申請中",2],["承認",3],["否認",4]]) %></td>
-               <td><%= check_box_tag("#{id}_#{obj.year}_#{obj.month}_confirm") %></td>
-               <td><%= link_to button_tag("osu", type: 'button', class: "btn btn-primary"), time_card_path(obj.user, year: obj.year, month: obj.month), :target => "_blank", rel: "noreferrer" %></td>
-             </tr>
-             <% end %>
-            <% end %> 
-           </tbody>
-          </table>
-          <% end %>
-        <% end %>
-        <%= pf.submit "変更を送信する", class: "btn btn-primary" %>
-        <% end %>
-       
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-
- <script>
-  $(function(){
-    var modal = document.getElementById('myModal');
-    $("#monthly").click(function(){
-        $("header").css("padding-right", 17);
-    })
-    $(".modal-header span").click(function() {
-        $("header").css("padding-right", 0);
-    })    
-    $(window).click(function(event) {
-        if (event.target == modal) {
-        // $("header").css("background-color", "blue");
-        $("header").css("padding-right", 0);
-        }
-    })
-  })
- </script>
+<%= render 'time_cards/modal' %>
 
 <script>
 $(function() {
@@ -126,7 +55,7 @@ $(function() {
 <% if current_user == @user %>
   <% if @user.superior && @authentication_events.count != 0 %>
     <div>
-      <button id="monthly" style="color:red;" data-toggle="modal" data-target="#myModal">
+      <button id="monthly" style="color:red;" data-toggle="modal" data-target=".bs-example-modal-lg">
          【所属長承認申請のお知らせ】
       </button>
       <span style="color:red; border: 3px solid red;"><%= @authentication_events.count %>件の通知があります</span>
@@ -251,7 +180,7 @@ $(function() {
         <% if current_user == @user %>
           <%= select_tag(:superior_man, options_for_select(@superiors_list), class: 'form-control')  %>
           <%= f.submit "申請", class: "btn btn-primary" %>
-          <% end %>
+        <% end %>
         <% end %>
       </td>
     </tr>

@@ -217,10 +217,10 @@ class TimeCardsController < ApplicationController
     
     def authentication_index(user,year,month)
       index = user.monthly_authentications.find_by(year: year, month: month) 
-      index2 = user.monthly_authentications.new(year: year, month: month)
       if index
         index
       else
+        index2 = user.monthly_authentications.new(year: year, month: month)
         index2.save
         index2
       end 

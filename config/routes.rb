@@ -24,10 +24,11 @@ Rails.application.routes.draw do
   resources :relationships,       only: [:create, :destroy]
   
   resources :monthly_authentications, only: [:update, :create] 
-  #do
-  #   member do
-  #     patch :updata
+  # do
+  #   collection do
+  #     patch :update_monthly_authentication
   #   end
   # end
+  patch '/monthly_authentications', to: 'monthly_authentications#monthly_update'
   
 end
