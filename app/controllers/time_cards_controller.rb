@@ -45,9 +45,8 @@ class TimeCardsController < ApplicationController
     @monthly_authentication = authentication_index(@user, @year, @month)
    
     #上長ユーザーのみ必要
-    @authentication_events = MonthlyAuthentication.where(certifier: @user.id, status: "申請中").order(:user_id)
-  
-  
+    @authentication_events = MonthlyAuthentication.where(certifier: @user.id).where("status like ?", "%申請中").order(:user_id)
+    #CSV
     respond_to do |format|
       format.html {}
       format.csv do
