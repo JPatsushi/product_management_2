@@ -32,14 +32,15 @@ class TimeCardsController < ApplicationController
     @superiors = User.where(superior: true)
     @superiors_list = superiors(@superiors)
     @monthly_authentication = authentication_index(@user, @year, @month)
-   
-    #上長ユーザーのみ必要
-    #一ヶ月認証
-    @authentication_events = MonthlyAuthentication.where(certifier: @user.id).where("status like ?", "%申請中").order(:user_id)
     
-    #残業申請
-    #@over_time_work
-    
+    if @user.superior 
+      #上長ユーザーのみ必要
+      #一ヶ月認証
+      @authentication_events = MonthlyAuthentication.where(certifier: @user.id).where("status like ?", "%申請中").order(:user_id)
+      
+      #残業申請認証
+      @over_time_authentications = TimeCard.find_by(certifer: @user.id)
+    end
     #CSV
     respond_to do |format|
       format.html {}
@@ -47,6 +48,33 @@ class TimeCardsController < ApplicationController
        send_data render_to_string, filename: "#{@year}_#{@month}_kintai.csv", type: :csv
       end
     end
+  end
+  
+  def up_overwork
+    #byebug
+    @user = User.find_by(id: params[:id])
+    condition = { user: @user, year: params[:year], month: params[:month], day: params[:day] }
+    TimeCard.find_by(condition) ? @time_card = TimeCard.find_by(condition) : @time_card = TimeCard.new(condition)
+    params[:check] != 1 ? day = params[:day] : day = params[:day].to_i + 1
+    time = Time.zone.local(params[:year], params[:month], day, params[:time_hour], params[:time_minute], 0)
+    @time_card.over_work = time
+    @time_card.content = params[:content]
+    @time_card.certifer = params[:superior]
+    @time_card.save
+    
+    # if params[:check] != 1
+    #   time = Time.zone.local(params[:year], params[:month], params[:day], params[:time_hour], params[:time_minute], 0)
+    #   @time_card.over_work = time
+    #   @time_card.content = params[:content]
+    #   @time_card.save
+    # else
+    #   time = Time.zone.local(params[:year], params[:month], params[:day].to_i + 1, params[:time_hour], params[:time_minute], 0)
+    #   @time_card.over_work = time
+    #   @time_card.content = params[:content]
+    #   @time_card.save
+    # end
+    redirect_to time_card_path(@user)
+    
   end
   
   def updata
@@ -136,17 +164,16 @@ class TimeCardsController < ApplicationController
     store(@year,@month)
     redirect_to time_card_path(@user)
   end
-  
-  def store(year,month)
-      session[:year] = year
-      session[:month] = month
-  end
-  
 
   private
   
+    def store(year,month)
+      session[:year] = year
+      session[:month] = month
+    end
+  
     def time_cards_params
-      params.require(:time_cards).permit(:in_at, :out_at)
+      params.require(:time_cards).permit(:in_at, :out_at, :content)
                                   
     end
 
@@ -182,11 +209,6 @@ class TimeCardsController < ApplicationController
       
       @time_card.save
 
-      # if @time_card.save
-      #   render json: { status: 'success', time_card: @time_card, working_status: @time_card.working_status }
-      # else
-      #   render json: { status: 'error' }
-      # end
     end 
     
     def time_info_params

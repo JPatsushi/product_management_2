@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181008040518) do
+ActiveRecord::Schema.define(version: 20181016083359) do
 
   create_table "monthly_authentications", force: :cascade do |t|
     t.string "year"
@@ -33,6 +33,9 @@ ActiveRecord::Schema.define(version: 20181008040518) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "remark"
+    t.datetime "over_work"
+    t.string "content"
+    t.integer "certifer"
   end
 
   create_table "time_infos", force: :cascade do |t|

@@ -132,31 +132,34 @@ $(function() {
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                   </br>
                   <h4 style="text-align: center;">【残業申請】</h4>
-                  <table class="table table-bordered table-striped"> 
-                    <thead>
-                      <tr style="font-weight: bold;">
-                        <td>日付</td>
-                        <td>曜日</td>
-                        <td>終了予定時間</td>
-                        <td>翌日</td>
-                        <td>業務処理内容</td>
-                        <td>指示者確認</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td><%= date_in_japanese(date, :month_day) %></td>
-                        <td><%= day_of_the_week_in_japanese(date, :short) %></td>
-                        <td class="over_work_modal"><%= select_tag "[#{date.year}][#{date.month}][#{date.day}][time_hour]", options_for_select((0..23).map(&:to_s)), class: 'form-control' %>
-                                                    <span style="font-weight: bold;">:</span>
-                                                    <%= select_tag "[#{date.year}][#{date.month}][#{date.day}][time_minute]", options_for_select((0..59).map(&:to_s)), class: 'form-control' %>
-                        </td>
-                        <td><%= check_box_tag "[#{date.year}][#{date.month}][#{date.day}][check]" %></td>
-                        <td class="over_work_modal_content"><%= text_field_tag "[#{date.year}][#{date.month}][#{date.day}][content]", '内容', class: 'form-control' %></td>
-                        <td class="over_work_modal_superior"><%= select_tag "[#{date.year}][#{date.month}][#{date.day}][superior]", options_for_select(@superiors_list), class: 'form-control' %></td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <%= form_tag up_overwork_time_card_path(year: date.year, month: date.month, day: date.day), method: :patch do %>
+                    <table class="table table-bordered table-striped"> 
+                      <thead>
+                        <tr style="font-weight: bold;">
+                          <td>日付</td>
+                          <td>曜日</td>
+                          <td>終了予定時間</td>
+                          <td>翌日</td>
+                          <td>業務処理内容</td>
+                          <td>指示者確認</td>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><%= date_in_japanese(date, :month_day) %></td>
+                          <td><%= day_of_the_week_in_japanese(date, :short) %></td>
+                          <td class="over_work_modal"><%= select_tag :time_hour, options_for_select((0..23).map(&:to_s)), class: 'form-control' %>
+                                                      <span style="font-weight: bold;">:</span>
+                                                      <%= select_tag :time_minute, options_for_select((0..59).map(&:to_s)), class: 'form-control' %>
+                          </td>
+                          <td><%= check_box_tag :check %></td>
+                          <td class="over_work_modal_content"><%= text_field_tag :content, '内容', class: 'form-control' %></td>
+                          <td class="over_work_modal_superior"><%= select_tag :superior, options_for_select(@superiors_list), class: 'form-control' %></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <%= submit_tag("変更を送信する", class: 'btn btn-primary', style: "width: 237px;") %>
+                  <% end %>
                 </div>
               </div>
             </div>
@@ -173,10 +176,10 @@ $(function() {
       <td></td>
       <td><%= work_hours(@time_cards[index].work_hours) %></td>
       <td><%= @time_cards[index].remark%></td>
+      <td><%= time_string_hour(@time_cards[index].over_work) %></td>
+      <td><%= time_string_min(@time_cards[index].over_work) %></td>
       <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <td><%= @time_cards[index].content %></td>
       <td></td>
     <% else %>
       <td></td>
