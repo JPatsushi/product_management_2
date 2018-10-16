@@ -5,20 +5,8 @@ class TimeCardsController < ApplicationController
     
   
   def show
+    @user = User.find(params[:id])
     
-    @user = User.find(params[:id]) 
-    # byebug
-    # if params[:name]
-    #   name_option = params[:name] #"4_2018_10"
-    #   name_array = name_option.split("_") #["4","2018","10"]
-    #   if name_array[1] != nil
-    #     session[:year] = name_array[1].to_i
-    #     session[:month] = name_array[2].to_i
-    #     @user = User.find(name_array[0].to_i)
-    #   else
-    #     @user = User.find(params[:id]) 
-    #   end
-    # end
     if params[:year] && params[:month]
       @year = params[:year].to_i
       @month = params[:month].to_i
@@ -40,12 +28,18 @@ class TimeCardsController < ApplicationController
     @user_time_cards = TimeCard.where(user: @user)
     store(@year,@month)
     
+    #上長へ承認するボタン
     @superiors = User.where(superior: true)
     @superiors_list = superiors(@superiors)
     @monthly_authentication = authentication_index(@user, @year, @month)
    
     #上長ユーザーのみ必要
+    #一ヶ月認証
     @authentication_events = MonthlyAuthentication.where(certifier: @user.id).where("status like ?", "%申請中").order(:user_id)
+    
+    #残業申請
+    #@over_time_work
+    
     #CSV
     respond_to do |format|
       format.html {}

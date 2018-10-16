@@ -123,10 +123,44 @@ $(function() {
     <% each_date_in_month(@year, @month) do |date, index| %>
     <tr>
       <td><% if current_user == @user %>
-           <%= link_to edit_time_card_path do %>
-             <button class= "btn btn-primary over_work">残業申請</button>
-           <% end %>
-         <% end %>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal_<%= index %>">残業申請</button>
+          <% end %>
+          <div class="modal fade" id="myModal_<%= index %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-body">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  </br>
+                  <h4 style="text-align: center;">【残業申請】</h4>
+                  <table class="table table-bordered table-striped"> 
+                    <thead>
+                      <tr style="font-weight: bold;">
+                        <td>日付</td>
+                        <td>曜日</td>
+                        <td>終了予定時間</td>
+                        <td>翌日</td>
+                        <td>業務処理内容</td>
+                        <td>指示者確認</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><%= date_in_japanese(date, :month_day) %></td>
+                        <td><%= day_of_the_week_in_japanese(date, :short) %></td>
+                        <td class="over_work_modal"><%= select_tag "[#{date.year}][#{date.month}][#{date.day}][time_hour]", options_for_select((0..23).map(&:to_s)), class: 'form-control' %>
+                                                    <span style="font-weight: bold;">:</span>
+                                                    <%= select_tag "[#{date.year}][#{date.month}][#{date.day}][time_minute]", options_for_select((0..59).map(&:to_s)), class: 'form-control' %>
+                        </td>
+                        <td><%= check_box_tag "[#{date.year}][#{date.month}][#{date.day}][check]" %></td>
+                        <td class="over_work_modal_content"><%= text_field_tag "[#{date.year}][#{date.month}][#{date.day}][content]", '内容', class: 'form-control' %></td>
+                        <td class="over_work_modal_superior"><%= select_tag "[#{date.year}][#{date.month}][#{date.day}][superior]", options_for_select(@superiors_list), class: 'form-control' %></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
       </td>
       <td><%= date_in_japanese(date, :month_day) %></td>
       <td><%= day_of_the_week_in_japanese(date, :short) %></td>
@@ -172,8 +206,6 @@ $(function() {
       <% total_time = total_work_time(@user_time_cards) %>
       <td style="vertical-align:top;"><%= work_hours_10digits(total_time) %></td>
       <td colspan="5"></td>
-      
-      
       <td>
         <%= form_for @monthly_authentication, url: monthly_authentication_path do |f| %>
         <%= f.label :status,"所属長承認　#{@monthly_authentication.status}" %>
@@ -187,7 +219,7 @@ $(function() {
   </tbody>
 </table>
 <% if current_user == @user %>
-  <%= form_tag(updata_time_card_path, remote: true, method: :patch, id: 'timecard-form', class: 'form-group show_button') do |f| %>
+  <%= form_tag(updata_time_card_path, method: :patch, id: 'timecard-form', class: 'form-group show_button') do |f| %>
     <% if @time_card.month == @month && @time_card.year == @year %>
       <% if !@time_card.in_at %>
         <%= submit_tag('出社', name: 'in', id: 'in', disabled: !!@time_card.in_at, class: 'btn btn-primary show_button1') %>
@@ -201,9 +233,6 @@ $(function() {
 <div class="hidden">
   <span id="day"><%= @time_card.day %></span>
 </div>
-
-<!--<div id="hoge" class="hidden" data-water-id="<#%= @time_card.day %>"></div>-->
-
 
 
 
