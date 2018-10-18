@@ -49,6 +49,15 @@ class TimeCard < ApplicationRecord
       0
     end
   end
+  
+  # # 時間外時間（秒）を返す
+  # def work_hours
+  #   if in_at && out_at
+  #     out_at - in_at
+  #   else
+  #     0
+  #   end
+  # end
 
   private
 

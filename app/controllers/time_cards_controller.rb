@@ -39,7 +39,7 @@ class TimeCardsController < ApplicationController
       @authentication_events = MonthlyAuthentication.where(certifier: @user.id).where("status like ?", "%申請中").order(:user_id)
       
       #残業申請認証
-      @over_time_authentications = TimeCard.find_by(certifer: @user.id)
+      @over_time_authentications = TimeCard.where(certifer: @user.id)
     end
     #CSV
     respond_to do |format|
@@ -60,6 +60,8 @@ class TimeCardsController < ApplicationController
     @time_card.over_work = time
     @time_card.content = params[:content]
     @time_card.certifer = params[:superior]
+    @superior = User.find(params[:superior])
+    @time_card.status = "#{@superior.name}に残業申請中"
     @time_card.save
     
     # if params[:check] != 1

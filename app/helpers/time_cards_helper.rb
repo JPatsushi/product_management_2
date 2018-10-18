@@ -111,7 +111,7 @@ module TimeCardsHelper
 
     '%02d' % hours + ':' '%02d' % minutes
   end
-end
+
 
   def total_work_time(user_time_cards)
     sum = 0
@@ -129,4 +129,4 @@ end
     work_hours_10digits(total_second)
   end
   
-  
+end
