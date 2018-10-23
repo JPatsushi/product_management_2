@@ -31,18 +31,12 @@ module TimeCardsHelper
 
     format == :short ? result[0] : result
   end
-
-  # 勤務状況を取得する
-  # def working_status(time_card)
-  #   case time_card.working_status
-  #   when :not_arrived
-  #     '未出社'
-  #   when :working
-  #     '勤務中'
-  #   when :left
-  #     '退社済'
-  #   end  
-  # end
+  
+  def into_week(year, month, day)
+    date = Time.zone.local(year, month, day)
+    week_in_japanese = %w[日 月 火 水 木 金 土]
+    week_in_japanese[date.wday]
+  end
 
   # 指定した年月の1日から月末までの日付とインデックスを引数としてブロックを実行する
   def each_date_in_month(year, month)
@@ -76,6 +70,7 @@ module TimeCardsHelper
     time ? time.strftime('%H:%M') : ''
   end
   
+  #オブジェクトで受けて10段階で返す
   def time_string_10digits(time)
     hour = time.hour
     min = time.min
@@ -91,16 +86,6 @@ module TimeCardsHelper
   def work_hours_10digits(time)
     hour = time / 3600
     hour = hour.round(2)
-    # remaining = time%3600
-    # remaining = remaining/6
-    # remaining = remaining*0.1
-    # remaining = remaining.round(0)
-    # #分に変更完了、次は10段階
-    # remaining = remaining/0.06
-    # remaining = remaining*0.1
-    # remaining = remaining.round(0)
-    # remaining = remaining*0.01
-    # sum = hour + remaining
     "#{hour}"
   end
 
@@ -129,4 +114,18 @@ module TimeCardsHelper
     work_hours_10digits(total_second)
   end
   
+  #時間外時間
+  def over_work_times(year, month, day, over_time, sd_work_time)
+    t1 = over_time.in_time_zone("UTC")
+    t2 = sd_work_time.in_time_zone("UTC")
+    time_card = Time.zone.local(year, month, day, 23, 59, 59)
+    
+    if over_time > time_card
+      time_interval = t1 + (1.day.to_i) - t2 
+    else
+      time_interval = t1 - t2
+    end
+ 
+    Time.at(time_interval).utc.strftime('%H:%M')
+  end
 end

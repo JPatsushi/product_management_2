@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   resources :time_cards do
     member do
       patch :add, :subtract, :updata, :up_overwork
-      post :update
+      post :update, :authenticate
     end
   end
   

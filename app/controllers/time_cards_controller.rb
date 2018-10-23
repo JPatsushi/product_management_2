@@ -39,7 +39,7 @@ class TimeCardsController < ApplicationController
       @authentication_events = MonthlyAuthentication.where(certifier: @user.id).where("status like ?", "%申請中").order(:user_id)
       
       #残業申請認証
-      @over_time_authentications = TimeCard.where(certifer: @user.id)
+      @over_time_authentications = TimeCard.where(certifer: @user.id).order(:user_id)
     end
     #CSV
     respond_to do |format|
@@ -55,8 +55,13 @@ class TimeCardsController < ApplicationController
     @user = User.find_by(id: params[:id])
     condition = { user: @user, year: params[:year], month: params[:month], day: params[:day] }
     TimeCard.find_by(condition) ? @time_card = TimeCard.find_by(condition) : @time_card = TimeCard.new(condition)
-    params[:check] != 1 ? day = params[:day] : day = params[:day].to_i + 1
-    time = Time.zone.local(params[:year], params[:month], day, params[:time_hour], params[:time_minute], 0)
+    
+    if params[:check].to_i != 1
+      time = Time.zone.local(params[:year], params[:month], params[:day] , params[:time_hour], params[:time_minute], 0)
+    else
+      time = Time.zone.local(params[:year], params[:month], params[:day] , params[:time_hour], params[:time_minute], 0).next_day
+    end
+    
     @time_card.over_work = time
     @time_card.content = params[:content]
     @time_card.certifer = params[:superior]
@@ -64,19 +69,29 @@ class TimeCardsController < ApplicationController
     @time_card.status = "#{@superior.name}に残業申請中"
     @time_card.save
     
-    # if params[:check] != 1
-    #   time = Time.zone.local(params[:year], params[:month], params[:day], params[:time_hour], params[:time_minute], 0)
-    #   @time_card.over_work = time
-    #   @time_card.content = params[:content]
-    #   @time_card.save
-    # else
-    #   time = Time.zone.local(params[:year], params[:month], params[:day].to_i + 1, params[:time_hour], params[:time_minute], 0)
-    #   @time_card.over_work = time
-    #   @time_card.content = params[:content]
-    #   @time_card.save
-    # end
     redirect_to time_card_path(@user)
     
+  end
+  
+  def authenticate
+    # byebug
+    @authenticated_time_cards = TimeCard.where(certifer: current_user.id)
+      @authenticated_time_cards.each do |obj|
+        if params[obj.user.id.to_s][obj.year.to_s] && params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s] && params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s]
+          if params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:check] == "1"
+            if params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] == "承認" || params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] == "否認"
+              obj.status = "残業" + params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] + "済"
+              obj.certifer = nil
+              obj.save
+            else
+              obj.status = params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status]
+              obj.certifer = nil
+              obj.save
+            end
+          end
+        end
+      end
+      redirect_to time_card_path(id: current_user.id)
   end
   
   def updata
