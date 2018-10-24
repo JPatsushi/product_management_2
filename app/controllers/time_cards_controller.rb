@@ -121,6 +121,10 @@ class TimeCardsController < ApplicationController
     @year = session[:year]
     @month = session[:month]
     @time_cards = monthly_time_cards(@user, @year, @month)
+    
+    #上長へ承認するボタン
+    @superiors = User.where(superior: true)
+    @superiors_list = superiors(@superiors)
   end
   
   def update

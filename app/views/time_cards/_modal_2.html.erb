@@ -35,7 +35,7 @@
                       <td><%= time_string(@time_info.sd_work_time) %></td>
                       <td><%= over_work_times(obj.year, obj.month, obj.day, obj.over_work, @time_info.sd_work_time) %></td>
                       <td><%= obj.content %></td>
-                      <td class="modal_option"><%= f.select :status, options_for_select(["なし","申請中","承認","否認"]) %></td>
+                      <td class="modal_option"><%= f.select :status, options_for_select(["なし","申請中","承認","否認"]), {}, class: 'form-control' %></td>
                       <td><%= check_box_tag("[#{id}][#{obj.year}][#{obj.month}][#{obj.day}][check]") %></td>
                       <td><%= link_to button_tag("確認", type: 'button', class: "btn btn-primary"), time_card_path(obj.user, year: obj.year, month: obj.month), :target => "_blank", rel: "noreferrer" %></td>
                     </tr>

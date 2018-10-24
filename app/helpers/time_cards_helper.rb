@@ -102,6 +102,7 @@ module TimeCardsHelper
     sum = 0
     user_time_cards.each do |card|
     sum = sum + card.work_hours
+    #また残業の時間も足していく
     end
     sum
   end

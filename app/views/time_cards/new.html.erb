@@ -7,11 +7,13 @@
       <%= render 'shared/error_messages', object: f.object %>
 
       <%= f.label :must_work_time, "指定勤務時間" %>
-      <%= f.time_field :must_work_time,
-      # value: "%H:%M",
-      # min: '00:00:00',
-      # max: '23:59:59',
-      class: 'form-control' %>
+      <%= f.time_field :must_work_time, class: 'form-control' %>
+    
+      
+      
+       <!--value: "%H:%M",-->
+       <!--min: '00:00:00',-->
+       <!--max: '23:59:59',-->
 
       <%= f.label :sd_work_time, "基本勤務時間" %>
       <%= f.time_field :sd_work_time, class: 'form-control' %>
