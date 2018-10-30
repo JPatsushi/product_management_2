@@ -40,6 +40,9 @@ class TimeCardsController < ApplicationController
       
       #残業申請認証
       @over_time_authentications = TimeCard.where(certifer: @user.id).order(:user_id)
+      
+      #勤怠変更認証
+      @change_time_cards = TimeCard.where(change_certifier: @user.id).order(:user_id)
     end
     #CSV
     respond_to do |format|
@@ -57,9 +60,9 @@ class TimeCardsController < ApplicationController
     TimeCard.find_by(condition) ? @time_card = TimeCard.find_by(condition) : @time_card = TimeCard.new(condition)
     
     if params[:check].to_i != 1
-      time = Time.zone.local(params[:year], params[:month], params[:day] , params[:time_hour], params[:time_minute], 0)
+      time = Time.zone.local(params[:year], params[:month], params[:day], params[:time_hour], params[:time_minute], 0)
     else
-      time = Time.zone.local(params[:year], params[:month], params[:day] , params[:time_hour], params[:time_minute], 0).next_day
+      time = Time.zone.local(params[:year], params[:month], params[:day], params[:time_hour], params[:time_minute], 0).next_day
     end
     
     @time_card.over_work = time
@@ -74,18 +77,65 @@ class TimeCardsController < ApplicationController
   end
   
   def authenticate
-    # byebug
     @authenticated_time_cards = TimeCard.where(certifer: current_user.id)
       @authenticated_time_cards.each do |obj|
         if params[obj.user.id.to_s][obj.year.to_s] && params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s] && params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s]
           if params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:check] == "1"
             if params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] == "承認" || params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] == "否認"
-              obj.status = "残業" + params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] + "済"
+              if obj.status.include?("残業") && obj.status.include?("勤怠変更") 
+                status_0 = obj.status.split(" ")[0]
+                status_1 = obj.status.split(" ")[1]
+                status_0 = "残業" + params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] + "済"
+                obj.status = status_0 + " " + status_1
+              elsif obj.status.include?("勤怠変更")
+                obj.status = "残業" + params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] + "済 " + obj.status
+              else
+                obj.status = "残業" + params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] + "済"
+              end
               obj.certifer = nil
               obj.save
             else
               obj.status = params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status]
               obj.certifer = nil
+              obj.save
+            end
+          end
+        end
+      end
+      redirect_to time_card_path(id: current_user.id)
+  end
+  
+  def authenticate_2
+    @authenticated_time_cards = TimeCard.where(change_certifier: current_user.id)
+      @authenticated_time_cards.each do |obj|
+        if params[obj.user.id.to_s][obj.year.to_s] && params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s] && params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s]
+          if params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:check] == "1"
+            if params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] == "承認" || params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] == "否認"
+              if obj.status.include?("勤怠変更") && obj.status.include?("残業")
+                status_0 = obj.status.split(" ")[0]
+                status_1 = obj.status.split(" ")[1]
+                status_1 = "勤怠変更" + params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] + "済"
+                obj.status = status_0 + " " + statis_1
+              elsif obj.status.include?("残業")
+                obj.status = obj.status + " " + "勤怠変更" + params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] + "済"
+              else
+                obj.status = "勤怠変更" + params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] + "済"
+              end
+              if params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status] == "承認"
+                obj.in_at = obj.tmp_in_at
+                obj.out_at = obj.tmp_out_at
+                obj.change_certifier = nil
+                obj.save
+              end
+              obj.tmp_in_at = nil
+              obj.tmp_out_at = nil
+              obj.change_certifier = nil
+              obj.save
+            else
+              obj.status = params[obj.user.id.to_s][obj.year.to_s][obj.month.to_s][obj.day.to_s][:status]
+              obj.tmp_in_at = nil
+              obj.tmp_out_at = nil
+              obj.change_certifier = nil
               obj.save
             end
           end
@@ -117,46 +167,63 @@ class TimeCardsController < ApplicationController
   end
   
   def edit
-    @user = User.find(params[:id])
-    @year = session[:year]
-    @month = session[:month]
-    @time_cards = monthly_time_cards(@user, @year, @month)
-    
-    #上長へ承認するボタン
-    @superiors = User.where(superior: true)
-    @superiors_list = superiors(@superiors)
+    # if request.get?
+      @user = User.find(params[:id])
+      @year = session[:year]
+      @month = session[:month]
+      @time_cards = monthly_time_cards(@user, @year, @month)
+      
+      #上長へ承認するボタン
+      @superiors = User.where(superior: true)
+      @superiors_list = superiors(@superiors)
+    # else
+      
+    # end
   end
   
   def update
+    #byebug
+    
     @user = User.find(params[:id])
     @year = session[:year]
     @month = session[:month]
     number_of_days_in_month = Date.new(@year, @month, 1).next_month.prev_day.day
     # @time_cards = monthly_time_cards(@user, @year, @month)
     (1..number_of_days_in_month).each do |number|
-     s = (number - 1).to_s
+    s = (number - 1).to_s
 
       condition = { user: @user, year: @year, month: @month, day: number }
-      if time_card = TimeCard.find_by(condition)
-        # time_card.update_attributes(time_cards_params)
-        time_card.in_at = params[:time_cards][s][:in_at] if !params[:time_cards][s][:in_at].empty?
-        time_card.out_at = params[:time_cards][s][:out_at] if !params[:time_cards][s][:out_at].empty?
-        time_card.remark = params[:time_cards][s][:remark] if !params[:time_cards][s][:remark].empty?
-        time_card.save
-       
-      else
-        time_card = TimeCard.new(condition)
-        time_card.in_at = params[:time_cards][s][:in_at] if !params[:time_cards][s][:in_at].empty?
-        time_card.out_at = params[:time_cards][s][:out_at] if !params[:time_cards][s][:out_at].empty?
-        time_card.remark = params[:time_cards][s][:remark] if !params[:time_cards][s][:remark].empty?
-        time_card.save
-      end
-        
-       
+      superior = User.find(params[:time_cards][s][:change_certifier])
+      time_card = TimeCard.find_by(condition) ? TimeCard.find_by(condition) : TimeCard.new(condition)
+      current_day = number
+      out_day = params[:time_cards][s][:check] == "1" ? current_day + 1 : current_day 
+    
+          if !params[:time_cards][s]["tmp_out_at(4i)"].empty? && !params[:time_cards][s]["tmp_out_at(5i)"].empty?
+            time_card.tmp_out_at = Time.zone.local(@year, @month, out_day, params[:time_cards][s]["tmp_out_at(4i)"], params[:time_cards][s]["tmp_out_at(5i)"], 0)
+            if !params[:time_cards][s]["tmp_in_at(4i)"].empty? && !params[:time_cards][s]["tmp_in_at(5i)"].empty?
+              time_card.tmp_in_at = Time.zone.local(@year, @month, current_day, params[:time_cards][s]["tmp_in_at(4i)"], params[:time_cards][s]["tmp_in_at(5i)"], 0)
+              time_card.status = "#{superior.name}に勤怠変更申請中"
+              time_card.remark = params[:time_cards][s][:remark] if !params[:time_cards][s][:remark].empty?
+              time_card.change_certifier = params[:time_cards][s][:change_certifier]
+              time_card.save
+            else
+              time_card.status = "#{superior.name}に勤怠変更申請中"
+              time_card.remark = params[:time_cards][s][:remark] if !params[:time_cards][s][:remark].empty?
+              time_card.change_certifier = params[:time_cards][s][:change_certifier]
+              time_card.save
+            end
+          else
+            if !params[:time_cards][s]["tmp_in_at(4i)"].empty? && !params[:time_cards][s]["tmp_in_at(5i)"].empty?
+              time_card.tmp_in_at = Time.zone.local(@year, @month, current_day, params[:time_cards][s]["tmp_in_at(4i)"], params[:time_cards][s]["tmp_in_at(5i)"], 0)
+              time_card.status = "#{superior.name}に勤怠変更申請中"
+              time_card.remark = params[:time_cards][s][:remark] if !params[:time_cards][s][:remark].empty?
+              time_card.change_certifier = params[:time_cards][s][:change_certifier]
+              time_card.save
+            else
+            end
+          end 
     end
-       
-     
-       redirect_to @user
+    redirect_to @user
 
   end
   

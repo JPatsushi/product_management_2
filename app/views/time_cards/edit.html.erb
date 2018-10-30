@@ -43,8 +43,7 @@
 <!--  Launch demo modal-->
 <!--</button>-->
     
-    <%= form_for time_card_path, url: { action: "update" } do |pf| %>
-
+  <%= form_for time_card_path, url: { action: "update" }, method: "patch" do |pf| %>
   <table class="table table-bordered table-striped edit_timecards_form">
     <thead>
       <tr>
@@ -57,12 +56,12 @@
       <tr>
         <td><%= date_in_japanese(date, :month_day) %></td>
         <td><%= day_of_the_week_in_japanese(date, :short) %></td>
-        <td><%= f.time_select :in_at, { prompt: {hour: "", minute: ""}, minute_step: 15}, class: 'form-control time_select' %></td>
-        <td><%= f.time_select :out_at, { prompt: {hour: "", minute: ""}, minute_step: 15}, class: 'form-control time_select' %></td>
+        <td><%= f.time_select :tmp_in_at, { prompt: {hour: "", minute: ""}, minute_step: 15}, class: 'form-control time_select' %></td>
+        <td><%= f.time_select :tmp_out_at, { prompt: {hour: "", minute: ""}, minute_step: 15}, class: 'form-control time_select' %></td>
         <td><%= check_box_tag "time_cards[#{index}][check]" %></td>
         <td></td>
         <td><%= f.text_field :remark, class: 'form-control' %></td>
-        <td class="over_work_modal_superior"><%= select_tag "time_cards[#{index}][superior]", options_for_select(@superiors_list), class: 'form-control' %></td>
+        <td class="over_work_modal_superior"><%= select_tag "time_cards[#{index}][change_certifier]", options_for_select(@superiors_list), class: 'form-control' %></td>
       </tr> 
       <% end %>
      <% end %>

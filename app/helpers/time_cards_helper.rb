@@ -116,17 +116,19 @@ module TimeCardsHelper
   end
   
   #時間外時間
-  def over_work_times(year, month, day, over_time, sd_work_time)
-    t1 = over_time.in_time_zone("UTC")
-    t2 = sd_work_time.in_time_zone("UTC")
-    time_card = Time.zone.local(year, month, day, 23, 59, 59)
-    
-    if over_time > time_card
-      time_interval = t1 + (1.day.to_i) - t2 
-    else
-      time_interval = t1 - t2
+  def over_work_times(year, month, day, over_time = nil, sd_work_time)
+    if over_time != nil
+      t1 = over_time.in_time_zone("UTC")
+      t2 = sd_work_time.in_time_zone("UTC")
+      time_card = Time.zone.local(year, month, day, 23, 59, 59)
+      
+      if over_time > time_card
+        time_interval = t1 + (1.day.to_i) - t2 
+      else
+        time_interval = t1 - t2
+      end
+   
+      Time.at(time_interval).utc.strftime('%H:%M')
     end
- 
-    Time.at(time_interval).utc.strftime('%H:%M')
   end
 end

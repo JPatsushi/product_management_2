@@ -80,9 +80,18 @@ $(function() {
         <% end %>
       </div>
       
-
-    
-    <div>【勤怠変更申請のお知らせ】</div>  
+      <div>
+        <% if @change_time_cards.count != 0 %>
+          <button style="color:red;" data-toggle="modal" data-target="#change_aut">
+            【勤怠変更申請のお知らせ】
+          </button>
+          <span style="color:red; border: 3px solid red;"><%= @change_time_cards.count %>件の通知があります</span>
+          <!--勤怠変更申請モーダル-->
+          <%= render 'time_cards/modal_3' %>
+        <% else %>
+          【勤怠変更申請のお知らせ】】
+        <% end %>
+      </div>
       
   <% else %> 
     <div>【所属長承認申請のお知らせ】</div>
@@ -113,10 +122,10 @@ $(function() {
   <thead>
     <tr>
       <th rowspan="3">残業申請</th>
-      <th rowspan="3">日付</th
-      ><th rowspan="3">曜日</th>
-      <th colspan="8">【実績】</th
-      ><th colspan="5">所定外勤務</th>
+      <th rowspan="3">日付</th>
+      <th rowspan="3">曜日</th>
+      <th colspan="8">【実績】</th>
+      <th colspan="5">所定外勤務</th>
     </tr>
     <tr>
       <th colspan="3">出社</th>
@@ -199,7 +208,7 @@ $(function() {
       <td><%= time_string_hour(@time_cards[index].over_work) %></td>
       <td><%= time_string_min(@time_cards[index].over_work) %></td>
       <!--<td><%#= work_hours(@time_info.sd_work_time - @time_cards[index].over_work) %></td>-->
-      <td><%= over_work_times(@time_cards[index].year, @time_cards[index].month, @time_cards[index].day, @time_cards[index].over_work, @time_info.sd_work_time) %></td>
+      <td><%#= over_work_times(@time_cards[index].year, @time_cards[index].month, @time_cards[index].day, @time_cards[index].over_work, @time_info.sd_work_time) %></td>
       <td><%= @time_cards[index].content %></td>
       <td><%= @time_cards[index].status%></td>
     <% else %>
