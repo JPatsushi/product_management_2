@@ -2,7 +2,7 @@ class TimeCardsController < ApplicationController
   before_action :logged_in_user
   before_action :correct_but_superior_user, only: [:show]
   before_action :admin_user, only: [:new, :create]
-    
+  before_action :non_admin_user, only: [:show, :edit, :update]  
   
   def show
     @user = User.find(params[:id])
@@ -305,6 +305,10 @@ class TimeCardsController < ApplicationController
     
     def admin_user
       redirect_to(root_url) unless current_user.admin?
+    end
+    
+    def non_admin_user
+      redirect_to(root_url) if current_user.admin?
     end
     
     def superiors(superiors)

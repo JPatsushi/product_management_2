@@ -136,18 +136,43 @@ class User < ApplicationRecord
   #   following.include?(other_user)
   # end
   
+    def self.import(file)
+      CSV.foreach(file.path, headers: true) do |row|
+  
+        user = User.find_by(name: row[1]) ? User.find_by(name: row[1]) : User.new()
+        
+        #byebug
+        row_hash = row.to_hash 
+        depart = row[3]
+        password = row[11]
+        id = row[0].to_i
+        
+        # tmp_hash = row_hash.except("id","affiliation")
+        tmp_hash = row_hash.slice(*updatable_attributes)
+        tmp_hash.merge!({depart: depart, password_confirmation: password, activated: true, activated_at: Time.zone.now})
+        user.attributes = tmp_hash
+        user.save
+        User.where(name: row[1]).update_all(id: id)
+      end
+    end
+  
+    def self.updatable_attributes
+      ["name","email","employee_number","uid", "basic_work_time", "designated_work_start_time",
+      "designated_work_end_time", "superior", "admin", "password"]
+    end
   
   
-   private
-
-    # メールアドレスをすべて小文字にする
-    def downcase_email
-      self.email = email.downcase
-    end
-
-    # 有効化トークンとダイジェストを作成および代入する
-    def create_activation_digest
-      self.activation_token  = User.new_token
-      self.activation_digest = User.digest(activation_token)
-    end
+  
+     private
+  
+      # メールアドレスをすべて小文字にする
+      def downcase_email
+        self.email = email.downcase
+      end
+  
+      # 有効化トークンとダイジェストを作成および代入する
+      def create_activation_digest
+        self.activation_token  = User.new_token
+        self.activation_digest = User.digest(activation_token)
+      end
 end

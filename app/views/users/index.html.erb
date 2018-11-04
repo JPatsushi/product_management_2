@@ -7,6 +7,12 @@
   </div>
 </div>
 
+<%= form_tag({controller: "users", action: "import", method: "post"}, {multipart: true}) do %>
+  <%= file_field_tag :file %>
+  <%= submit_tag "オブジェクトを一括インポート", class: "btn btn-primary" %>
+<% end %>
+
+
 <%= paginate @users %>
 
 <% unless @users.empty? %>

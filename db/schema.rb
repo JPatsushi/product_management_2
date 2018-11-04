@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181025064356) do
+ActiveRecord::Schema.define(version: 20181104124635) do
 
   create_table "monthly_authentications", force: :cascade do |t|
     t.string "year"
@@ -64,6 +64,11 @@ ActiveRecord::Schema.define(version: 20181025064356) do
     t.datetime "reset_sent_at"
     t.string "depart"
     t.boolean "superior", default: false
+    t.integer "employee_number"
+    t.string "uid"
+    t.datetime "basic_work_time"
+    t.datetime "designated_work_start_time"
+    t.datetime "designated_work_end_time"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

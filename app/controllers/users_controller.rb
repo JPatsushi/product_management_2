@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
-  before_action :correct_user,   only: [:edit, :update]
+  # before_action :correct_user,   only: [:edit, :update]
   before_action :admin_user,     only: [:destroy, :index]
-  before_action :correct_but_admin_user, only: [:show]
+  before_action :correct_but_admin_user, only: [:show, :edit, :update]
   
   def index
     if params[:q]
@@ -59,6 +59,12 @@ class UsersController < ApplicationController
     User.find(params[:id]).destroy
     flash[:success] = "ユーザーを削除しました"
     redirect_to users_url
+  end
+  
+  #CSV読み込み
+  def import
+    User.import(params[:file])
+    redirect_to current_user
   end
   
   private
