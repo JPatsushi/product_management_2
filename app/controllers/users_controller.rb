@@ -46,7 +46,7 @@ class UsersController < ApplicationController
   end
   
   def update
-    if current_user.admin
+    if current_user.admin?
       @user = User.find(params[:id])
       password = params[:password]
       @user.attributes = {password: password, password_confirmation: password}
@@ -78,8 +78,7 @@ class UsersController < ApplicationController
   
   #出勤社員一覧
   def working_member
-    byebug
-    time_cards = TimeCard.where(day: 6)
+    time_cards = TimeCard.where.not(in_at: nil).where(out_at: nil)
     @members = []
     time_cards.each {|time_card| @members << time_card.user}
   end
