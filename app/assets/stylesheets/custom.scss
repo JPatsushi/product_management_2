@@ -248,8 +248,8 @@ input {
   margin: 0;
   li {
     overflow: auto;
-    padding: 10px 0;
-    border-bottom: 1px solid $gray-lighter;
+    padding: 5px 0;
+    // border-bottom: 1px solid $gray-lighter;
   }
 }
 
@@ -463,4 +463,18 @@ header {
     width: 107px;
     margin-bottom: 0px;
   }
+}
+
+/* CSVインポート */
+.csv_form {
+   width: 350px;
+   margin: 10px;
+   float: left;
+
+}
+
+/* アコーディオン */
+.accordion {
+  width: 90px;
+  height: 45px;
 }

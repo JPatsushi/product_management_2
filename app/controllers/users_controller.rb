@@ -46,32 +46,60 @@ class UsersController < ApplicationController
   end
   
   def update
-    @user = User.find(params[:id])
-    if @user.update_attributes(user_params)
-      flash[:success] = "プロフィールを更新しました"
-      redirect_to @user
+    if current_user.admin
+      @user = User.find(params[:id])
+      password = params[:password]
+      @user.attributes = {password: password, password_confirmation: password}
+      @user.save
+      if @user.update_attributes(user_params)
+        flash[:success] = "#{@user.name}のプロフィールを更新しました"
+        redirect_to users_path
+      else
+        redirect_to users_path
+      end
     else
-      render 'edit'
+      @user = User.find(params[:id])
+      if @user.update_attributes(user_params)
+        flash[:success] = "プロフィールを更新しました"
+        redirect_to @user
+      else
+        render 'edit'
+      end
     end
   end
   
   def destroy
-    User.find(params[:id]).destroy
-    flash[:success] = "ユーザーを削除しました"
+    user = User.find(params[:id])
+    name = user.name
+    user.destroy
+    flash[:success] = "#{name}を削除しました"
     redirect_to users_url
+  end
+  
+  #出勤社員一覧
+  def working_member
+    byebug
+    time_cards = TimeCard.where(day: 6)
+    @members = []
+    time_cards.each {|time_card| @members << time_card.user}
   end
   
   #CSV読み込み
   def import
-    User.import(params[:file])
-    redirect_to current_user
+    if params[:file]
+      User.import(params[:file])
+      redirect_to current_user
+    else
+      redirect_to users_path
+    end
   end
   
   private
 
     def user_params
       params.require(:user).permit(:name, :email, :password,
-                                   :password_confirmation, :depart) #adminを追加してもREDにならなかった。
+                                   :password_confirmation, :depart, :employee_number, :uid, :basic_work_time,
+                                   :designated_work_start_time, :designated_work_end_time) #adminを追加してもREDにならなかった。
                                    
     end
     

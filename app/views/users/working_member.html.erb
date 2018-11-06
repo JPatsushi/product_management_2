@@ -1,0 +1,16 @@
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>社員番号</th>
+        <th>名前</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @members.each do |member|%>
+        <tr>
+          <td><%= member.uid %></td>
+          <td><%= member.name %></td>
+        </tr> 
+      <% end %>
+    </tbody>
+</table>

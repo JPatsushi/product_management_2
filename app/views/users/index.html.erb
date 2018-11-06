@@ -7,13 +7,16 @@
   </div>
 </div>
 
-<%= form_tag({controller: "users", action: "import", method: "post"}, {multipart: true}) do %>
-  <%= file_field_tag :file %>
-  <%= submit_tag "オブジェクトを一括インポート", class: "btn btn-primary" %>
-<% end %>
+<div class="row">
+  <div class="csv_form">
+    <%= form_tag({controller: "users", action: "import", method: "post"}, {multipart: true}) do %>
+      <%= file_field_tag :file %>
+      <%= submit_tag "CSVをインポート", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>
 
-
-<%= paginate @users %>
+<!--<%#= paginate @users %>-->
 
 <% unless @users.empty? %>
 <!--<ul class="users">-->

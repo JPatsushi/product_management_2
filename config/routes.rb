@@ -19,8 +19,10 @@ Rails.application.routes.draw do
   end
   
   resources :users do
-    collection { post :import }
-    
+    collection do
+      post :import 
+      get :working_member 
+    end
   end
   resources :account_activations, only: [:edit]
   resources :password_resets,     only: [:new, :create, :edit, :update]

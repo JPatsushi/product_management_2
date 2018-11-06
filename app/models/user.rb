@@ -147,12 +147,17 @@ class User < ApplicationRecord
         password = row[11]
         id = row[0].to_i
         
-        # tmp_hash = row_hash.except("id","affiliation")
         tmp_hash = row_hash.slice(*updatable_attributes)
         tmp_hash.merge!({depart: depart, password_confirmation: password, activated: true, activated_at: Time.zone.now})
         user.attributes = tmp_hash
         user.save
         User.where(name: row[1]).update_all(id: id)
+        # User.find(104).update_column(:id,106) これも変更可能
+        
+        # 参考用:
+        # def self.attributes_protected_by_default
+        #   [] # ["id", ..other]
+        # end
       end
     end
   
