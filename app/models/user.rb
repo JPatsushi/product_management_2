@@ -20,6 +20,7 @@ class User < ApplicationRecord
   
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
+  # validates :password, length: {minimum: 6}, on: :update, allow_blank: true
 
   # 渡された文字列のハッシュ値を返す
   def User.digest(string)

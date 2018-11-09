@@ -8,7 +8,7 @@
     <div id="<%= "collapse-#{id}" %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="<%= "heading-#{id}" %>">
       <div class="panel-body">
         <%= form_for(user, url: user_path(user)) do |f| %>
-        <%= render 'shared/error_messages', object: f.object %>
+        <!--<%#= render 'shared/error_messages', object: f.object %>-->
   
         <%= f.label :name %>
         <%= f.text_field :name, class: 'form-control' %>

@@ -1,4 +1,7 @@
 <% provide(:title, @title) %>
+<% if @user %>
+<%= render 'shared/error_messages', object: @user %>
+<% end %>
 <h1><%= @title %></h1>
 
 <div class="row">

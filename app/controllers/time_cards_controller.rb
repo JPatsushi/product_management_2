@@ -6,7 +6,6 @@ class TimeCardsController < ApplicationController
   
   def show
     @user = User.find(params[:id])
-    
     if params[:year] && params[:month]
       @year = params[:year].to_i
       @month = params[:month].to_i
@@ -157,7 +156,7 @@ class TimeCardsController < ApplicationController
   end
   
   def create
-    byebug
+    
     # これは使えない @time_info = TimeInfo.new(must_work_time: params[:must_work_time], sd_work_time: params[:sd_work_time])
      @time_info = TimeInfo.new(time_info_params)
     if @time_info.save

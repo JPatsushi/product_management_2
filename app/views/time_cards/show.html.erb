@@ -31,9 +31,9 @@ $(function() {
                 <% end %>
               <% end %>
             </th>
-              <th rowspan="2">指定勤務時間 <% if @time_info %><%= time_string_10digits(@time_info.must_work_time) %><% end %></br>
-              指定勤務終了時間 <% if @time_info %><%= time_string_10digits(@time_info.sd_work_time) %><% end %> </th>
-            <th rowspan="2" colspan="3"></br>基本時間 <% if @time_info %><%= time_string_10digits(@time_info.sd_work_time) %><% end %></th>
+              <th rowspan="2">指定勤務開始時間 <% if @user.designated_work_start_time %><%= time_string_10digits(@user.designated_work_start_time) %><% end %></br>
+              指定勤務終了時間 <% if @user.designated_work_end_time %><%= time_string_10digits(@user.designated_work_end_time) %><% end %> </th>
+            <th rowspan="2" colspan="3"></br>基本時間 <% if @user.basic_work_time %><%= time_string_10digits(@user.basic_work_time) %><% end %></th>
             <th rowspan="2">初日 <%= @first_day.month %>/<%= @first_day.day %></th>
         </tr>
         <tr>
@@ -229,8 +229,8 @@ $(function() {
     </tr> 
     <% end %>
     <tr>
-      <% if @time_info %>
-        <td style="vertical-align:top;"><%= total_standard_work_time(@time_info.sd_work_time,@time_cards_count) %></td>
+      <% if @user.basic_work_time %>
+        <td style="vertical-align:top;"><%= total_standard_work_time(@user.basic_work_time,@time_cards_count) %></td>
       <% else %>
         <td style="vertical-align:top;"><%= 0 %></td>
       <% end %>

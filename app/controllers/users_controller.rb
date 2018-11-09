@@ -47,15 +47,22 @@ class UsersController < ApplicationController
   
   def update
     if current_user.admin?
+
       @user = User.find(params[:id])
-      password = params[:password]
-      @user.attributes = {password: password, password_confirmation: password}
-      @user.save
+       
+      if params[:password]
+        password = params[:password]
+        @user.attributes = {password: password, password_confirmation: password}
+      end
+      
       if @user.update_attributes(user_params)
         flash[:success] = "#{@user.name}のプロフィールを更新しました"
         redirect_to users_path
       else
-        redirect_to users_path
+        @q = User.ransack(activated_true: true)
+        @title = "ユーザ一覧"
+        @users = @q.result.page(params[:page])
+        render 'index'
       end
     else
       @user = User.find(params[:id])
