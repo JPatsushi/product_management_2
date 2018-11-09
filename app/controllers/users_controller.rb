@@ -81,6 +81,8 @@ class UsersController < ApplicationController
     time_cards = TimeCard.where.not(in_at: nil).where(out_at: nil)
     @members = []
     time_cards.each {|time_card| @members << time_card.user}
+    #@members = User.joins(:time_cards).where.not(time_cards: {in_at: nil}).where(time_cards: {out_at: nil})
+    # User.where("name like :name", name: "上長%").pluck(:id)
   end
   
   #CSV読み込み

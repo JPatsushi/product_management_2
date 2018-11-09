@@ -157,7 +157,7 @@ class TimeCardsController < ApplicationController
   end
   
   def create
-    
+    byebug
     # これは使えない @time_info = TimeInfo.new(must_work_time: params[:must_work_time], sd_work_time: params[:sd_work_time])
      @time_info = TimeInfo.new(time_info_params)
     if @time_info.save
