@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181104124635) do
+ActiveRecord::Schema.define(version: 20181111155240) do
+
+  create_table "locations", force: :cascade do |t|
+    t.integer "lo_number"
+    t.string "lo_name"
+    t.string "lo_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "monthly_authentications", force: :cascade do |t|
     t.string "year"

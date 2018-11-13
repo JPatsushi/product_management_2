@@ -58,3 +58,4 @@ user_2.monthly_authentications.create!(year: 2018,
                                  certifier: 2,
                                  status: "申請中"
                                  )
+
