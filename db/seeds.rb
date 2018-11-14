@@ -41,6 +41,7 @@ User.create!(name:  "上長B",
               activated_at: Time.zone.now)
 end
 
+# 一ヶ月勤怠申請
 user = User.find_by(id:4)
 user.monthly_authentications.create!(year: 2018,
                                  month: 10,
@@ -58,4 +59,16 @@ user_2.monthly_authentications.create!(year: 2018,
                                  certifier: 2,
                                  status: "申請中"
                                  )
-
+# 拠点一覧
+Location.create!(lo_number: 1,
+                 lo_name: "東京",
+                 lo_type: "出勤"
+                 )
+Location.create!(lo_number: 2,
+                 lo_name: "大阪",
+                 lo_type: "退勤"
+                 )
+Location.create!(lo_number: 3,
+                 lo_name: "山形",
+                 lo_type: "なし"
+                 )                  

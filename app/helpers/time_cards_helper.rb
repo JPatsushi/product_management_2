@@ -116,10 +116,10 @@ module TimeCardsHelper
   end
   
   #時間外時間
-  def over_work_times(year, month, day, over_time = nil, sd_work_time)
-    if over_time != nil
+  def over_work_times(year, month, day, over_time = nil, basic_work_time)
+    if over_time != nil && basic_work_time != nil
       t1 = over_time.in_time_zone("UTC")
-      t2 = sd_work_time.in_time_zone("UTC")
+      t2 = basic_work_time.in_time_zone("UTC")
       time_card = Time.zone.local(year, month, day, 23, 59, 59)
       
       if over_time > time_card

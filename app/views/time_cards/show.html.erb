@@ -1,123 +1,10 @@
 <% provide(:title, @user.name) %>
 
+<%= render 'time_cards/show_parts/upper_table' %>
+<%= render 'time_cards/show_parts/upper_aut_buttons' %>
+<%= render 'time_cards/show_parts/upper_att_buttons' %>
 
-<script>
-$(function() {
-  
-  var day = $('#day').text();
-  $("#timecard-form").css("top", 365 + (day - 1) * 37);
-  // var test = $('#hoge').data('water-id');
-  // document.write(test);
- 
-})
-
-</script> 
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th rowspan="2" style="vertical-align: middle;">
-              <% if current_user == @user %>
-                <%= link_to subtract_time_card_path, method: :patch, remote: true do %>
-                  <button class= "btn btn-primary">←</button>
-                <% end %>
-              <% end %>
-              <span>　　</span>
-              <%= @year %>年<%= @month %>月 時間管理表
-              <span>　　</span>
-              <% if current_user == @user %>
-                <%= link_to add_time_card_path, method: :patch, remote: true do %>
-                  <button class= "btn btn-primary">→</button>
-                <% end %>
-              <% end %>
-            </th>
-              <th rowspan="2">指定勤務開始時間 <% if @user.designated_work_start_time %><%= time_string_10digits(@user.designated_work_start_time) %><% end %></br>
-              指定勤務終了時間 <% if @user.designated_work_end_time %><%= time_string_10digits(@user.designated_work_end_time) %><% end %> </th>
-            <th rowspan="2" colspan="3"></br>基本時間 <% if @user.basic_work_time %><%= time_string_10digits(@user.basic_work_time) %><% end %></th>
-            <th rowspan="2">初日 <%= @first_day.month %>/<%= @first_day.day %></th>
-        </tr>
-        <tr>
-        </tr>
-        <tr>
-            <th>所属 <%= @user.depart %></th>
-            <th>氏名 <%= @user.name %></th>
-            <th>コード</th><th>5555</th>
-            <th>出勤日数 <%= @time_cards_count %>日</th>
-            <th>締め <%= @last_day.month %>/<%= @last_day.day %></th>
-        </tr>
-    </thead>
-</table>
-
-<!--<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">-->
-<!--  【所属長承認申請のお知らせ】-->
-<!--</button>-->
-<% if current_user == @user %>
-  <% if @user.superior %>
-    
-      <div>
-        <% if @authentication_events.count != 0 %>
-          <button id="monthly" style="color:red;" data-toggle="modal" data-target=".bs-example-modal-lg">
-             【所属長承認申請のお知らせ】
-          </button>
-          <span style="color:red; border: 3px solid red;"><%= @authentication_events.count %>件の通知があります</span>
-          <!--一ヶ月承認申請モーダル-->
-          <%= render 'time_cards/modal' %>
-        <% else %>
-          【所属長承認申請のお知らせ】
-        <% end %>
-      </div>
-    
-      <div>
-        <% if @over_time_authentications.count != 0 %>
-          <button style="color:red;" data-toggle="modal" data-target="#overwork_aut">
-            【残業申請のお知らせ】
-          </button>
-          <span style="color:red; border: 3px solid red;"><%= @over_time_authentications.count %>件の通知があります</span>
-          <!--残業申請モーダル-->
-          <%= render 'time_cards/modal_2' %>
-        <% else %>
-          【残業申請のお知らせ】
-        <% end %>
-      </div>
-      
-      <div>
-        <% if @change_time_cards.count != 0 %>
-          <button style="color:red;" data-toggle="modal" data-target="#change_aut">
-            【勤怠変更申請のお知らせ】
-          </button>
-          <span style="color:red; border: 3px solid red;"><%= @change_time_cards.count %>件の通知があります</span>
-          <!--勤怠変更申請モーダル-->
-          <%= render 'time_cards/modal_3' %>
-        <% else %>
-          【勤怠変更申請のお知らせ】】
-        <% end %>
-      </div>
-      
-  <% else %> 
-    <div>【所属長承認申請のお知らせ】</div>
-    <div>【勤怠変更申請のお知らせ】</div>
-    <div>【残業申請のお知らせ】</div>
-  <% end %>
-  
-<% end %>
-
-<% if current_user == @user %>
-  <div>
-    <%= link_to edit_time_card_path do %>
-      <button class= "btn btn-primary btn-lg">勤怠を編集</button>
-    <% end %>
-    <%= link_to time_card_path(format: :csv) do %>
-      <button class= "btn btn-primary btn-lg">CSV出力</button>
-    <% end %>
-    </br>
-    <%= link_to edit_time_card_path do %>
-      <button class= "btn btn-primary btn-lg">勤怠修正ログ（承認済）</button>
-    <% end %>
-  </div>
-  </br>
-  </br>
-<% end %>
-
+<!--勤怠テーブル-->
 <table class="table table-bordered table-striped">
   <thead>
     <tr>
@@ -151,49 +38,7 @@ $(function() {
   <tbody>
     <% each_date_in_month(@year, @month) do |date, index| %>
     <tr>
-      <td><% if current_user == @user %>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal_<%= index %>">残業申請</button>
-          <% end %>
-          <div class="modal fade" id="myModal_<%= index %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog modal-lg" role="document">
-              <div class="modal-content">
-                <div class="modal-body">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  </br>
-                  <h4 style="text-align: center;">【残業申請】</h4>
-                  <%= form_tag up_overwork_time_card_path(year: date.year, month: date.month, day: date.day), method: :patch do %>
-                    <table class="table table-bordered table-striped"> 
-                      <thead>
-                        <tr style="font-weight: bold;">
-                          <td>日付</td>
-                          <td>曜日</td>
-                          <td>終了予定時間</td>
-                          <td>翌日</td>
-                          <td>業務処理内容</td>
-                          <td>指示者確認</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td><%= date_in_japanese(date, :month_day) %></td>
-                          <td><%= day_of_the_week_in_japanese(date, :short) %></td>
-                          <td class="over_work_modal"><%= select_tag :time_hour, options_for_select((0..23).map(&:to_s)), class: 'form-control' %>
-                                                      <span style="font-weight: bold;">:</span>
-                                                      <%= select_tag :time_minute, options_for_select((0..59).map(&:to_s)), class: 'form-control' %>
-                          </td>
-                          <td><%= check_box_tag :check %></td>
-                          <td class="over_work_modal_content"><%= text_field_tag :content, '内容', class: 'form-control' %></td>
-                          <td class="over_work_modal_superior"><%= select_tag :superior, options_for_select(@superiors_list), class: 'form-control' %></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <%= submit_tag("変更を送信する", class: 'btn btn-primary', style: "width: 237px;") %>
-                  <% end %>
-                </div>
-              </div>
-            </div>
-          </div>
-      </td>
+      <td><%= render 'time_cards/show_parts/over_work_button', index: index, date: date %></td>
       <td><%= date_in_japanese(date, :month_day) %></td>
       <td><%= day_of_the_week_in_japanese(date, :short) %></td>
     <% if @time_cards[index] %>
@@ -202,19 +47,32 @@ $(function() {
       <td></td>
       <td><%= time_string_hour(@time_cards[index].out_at) %></td>
       <td><%= time_string_min(@time_cards[index].out_at) %></td>
-      <td></td>
+      <!--出退社ボタン-->
+      <% if current_user == @user && date.year == @time_card.year && date.month == @time_card.month && date.day == @time_card.day %>
+        <% if !@time_card.out_at %>  
+          <td><%= button_to '退社', {controller: 'time_cards', action: 'updata'},
+              {method: :patch, name: 'out', disabled: !@time_card.in_at || !!@time_card.out_at, class: 'btn btn-success'} %></td>
+        <% else%>
+          <td></td>
+        <% end %> 
+      <% end %>
       <td><%= work_hours(@time_cards[index].work_hours) %></td>
       <td><%= @time_cards[index].remark %></td>
       <td><%= time_string_hour(@time_cards[index].over_work) %></td>
       <td><%= time_string_min(@time_cards[index].over_work) %></td>
-      <!--<td><%#= work_hours(@time_info.sd_work_time - @time_cards[index].over_work) %></td>-->
-      <td><%#= over_work_times(@time_cards[index].year, @time_cards[index].month, @time_cards[index].day, @time_cards[index].over_work, @time_info.sd_work_time) %></td>
+      <td><%= over_work_times(@time_cards[index].year, @time_cards[index].month, @time_cards[index].day, @time_cards[index].over_work, @user.basic_work_time) %></td>
       <td><%= @time_cards[index].content %></td>
       <td><%= @time_cards[index].status%></td>
     <% else %>
       <td></td>
       <td></td>
-      <td></td>
+      <!--出社ボタン-->
+      <% if current_user == @user && date.year == @time_card.year && date.month == @time_card.month && date.day == @time_card.day %>
+        <td><%= button_to '出社', {controller: 'time_cards', action: 'updata'},
+            {method: :patch, name: 'in', disabled: !!@time_card.in_at, class: 'btn btn-primary'} %></td>
+      <% else%>
+        <td></td>
+      <% end %>
       <td></td>
       <td></td>
       <td></td>
@@ -229,43 +87,27 @@ $(function() {
     </tr> 
     <% end %>
     <tr>
-      <% if @user.basic_work_time %>
-        <td style="vertical-align:top;"><%= total_standard_work_time(@user.basic_work_time,@time_cards_count) %></td>
-      <% else %>
-        <td style="vertical-align:top;"><%= 0 %></td>
-      <% end %>
-      <td colspan="2"></td>
-      <td colspan="6"></td>
-      <% total_time = total_work_time(@user_time_cards) %>
-      <td style="vertical-align:top;"><%= work_hours_10digits(total_time) %></td>
-      <td colspan="5"></td>
-      <td>
-        <%= form_for @monthly_authentication, url: monthly_authentication_path do |f| %>
-        <%= f.label :status,"所属長承認　#{@monthly_authentication.status}" %>
-        <% if current_user == @user %>
-          <%= select_tag(:superior_man, options_for_select(@superiors_list), class: 'form-control')  %>
-          <%= f.submit "申請", class: "btn btn-primary" %>
-        <% end %>
-        <% end %>
-      </td>
+      <%= render 'time_cards/show_parts/downer_row' %>
     </tr>
   </tbody>
 </table>
-<% if current_user == @user %>
-  <%= form_tag(updata_time_card_path, method: :patch, id: 'timecard-form', class: 'form-group show_button') do |f| %>
-    <% if @time_card.month == @month && @time_card.year == @year %>
-      <% if !@time_card.in_at %>
-        <%= submit_tag('出社', name: 'in', id: 'in', disabled: !!@time_card.in_at, class: 'btn btn-primary show_button1') %>
-      <% elsif !@time_card.out_at %>
-        <%= submit_tag('退社', name: 'out', id: 'out', disabled: !@time_card.in_at || !!@time_card.out_at, class: 'btn btn-success show_button2') %>
-      <% end %>
-    <% end %>
-  <% end %>
-<% end %>
 
-<div class="hidden">
-  <span id="day"><%= @time_card.day %></span>
-</div>
+<!--出社退社ボタン-->
+<!--<%# if current_user == @user %>-->
+<!--  <%#= form_tag(updata_time_card_path, method: :patch, id: 'timecard-form', class: 'form-group show_button') do |f| %>-->
+<!--    <%# if @time_card.month == @month && @time_card.year == @year %>-->
+<!--      <%# if !@time_card.in_at %>-->
+<!--        <%#= submit_tag('出社', name: 'in', id: 'in', disabled: !!@time_card.in_at, class: 'btn btn-primary show_button1') %>-->
+<!--      <#% elsif !@time_card.out_at %>-->
+<!--        <%#= submit_tag('退社', name: 'out', id: 'out', disabled: !@time_card.in_at || !!@time_card.out_at, class: 'btn btn-success show_button2') %>-->
+<!--      <%# end %>-->
+<!--    <%# end %>-->
+<!--  <%# end %>-->
+<!--<%# end %>-->
+
+<!--<div class="hidden">-->
+<!--  <span id="day"><%#= @time_card.day %></span>-->
+<!--</div>-->
 
 
 

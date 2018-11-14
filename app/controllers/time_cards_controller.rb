@@ -18,11 +18,12 @@ class TimeCardsController < ApplicationController
       @month = today.month
     end
     
+    @day = Time.current.day
     @time_cards = monthly_time_cards(@user, @year, @month)
     @time_card = TimeCard.today(@user)
     @first_day = Date.new(@year, @month, 1)
     @last_day = Date.new(@year, @month, 1).next_month.prev_day
-    @time_info = TimeInfo.all.last
+    # @time_info = TimeInfo.all.last
     @time_cards_count = all_time_cards_for_count(@user)
     @user_time_cards = TimeCard.where(user: @user)
     store(@year,@month)
@@ -146,9 +147,13 @@ class TimeCardsController < ApplicationController
   def updata
     @user = User.find(params[:id])
     @time_card = TimeCard.today(@user)
-    ajax_show_action
-    # render 'show'
-    redirect_to time_card_path(@user)
+      if params[:in]
+        @time_card.in_at = Time.now
+      elsif params[:out]
+        @time_card.out_at = Time.now
+      end
+      @time_card.save
+      redirect_to time_card_path(@user)
   end
   
   def new
@@ -285,18 +290,6 @@ class TimeCardsController < ApplicationController
       end
       count
     end
-
-    # Ajaxでshowアクションが呼ばれた場合のハンドラ
-    def ajax_show_action
-      if params[:in]
-        @time_card.in_at = Time.now
-      elsif params[:out]
-        @time_card.out_at = Time.now
-      end
-      
-      @time_card.save
-
-    end 
     
     def time_info_params
       params.require(:time_info).permit(:must_work_time,:sd_work_time) 
