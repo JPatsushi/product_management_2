@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181111155240) do
+ActiveRecord::Schema.define(version: 20181115132319) do
 
   create_table "locations", force: :cascade do |t|
     t.integer "lo_number"
@@ -27,6 +27,17 @@ ActiveRecord::Schema.define(version: 20181111155240) do
     t.integer "user_id"
     t.string "content"
     t.string "status", default: "未"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.string "code", limit: 10, null: false
+    t.string "name", limit: 50, null: false
+    t.string "name_kana", limit: 50, default: "", null: false
+    t.integer "price", null: false
+    t.integer "purchase_cost", null: false
+    t.boolean "availability", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

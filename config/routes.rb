@@ -32,4 +32,5 @@ Rails.application.routes.draw do
   resources :locations, only: [:index, :create, :destroy, :update]
   patch '/monthly_authentications', to: 'monthly_authentications#monthly_update'
   
+  resources :products, only: [:new, :create]
 end
