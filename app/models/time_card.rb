@@ -36,3 +36,4 @@ class TimeCard < ApplicationRecord
   private
 
 end
+

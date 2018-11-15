@@ -5,6 +5,9 @@ class TimeCardsController < ApplicationController
   before_action :non_admin_user, only: [:show, :edit, :update]  
   
   def show
+    
+    @person = TimeCard::Person.new(name: 'bob', age: '18')
+    
     @user = User.find(params[:id])
     if params[:year] && params[:month]
       @year = params[:year].to_i
@@ -291,9 +294,9 @@ class TimeCardsController < ApplicationController
       count
     end
     
-    def time_info_params
-      params.require(:time_info).permit(:must_work_time,:sd_work_time) 
-    end
+    # def time_info_params
+    #   params.require(:time_info).permit(:must_work_time,:sd_work_time) 
+    # end
     
     def admin_user
       redirect_to(root_url) unless current_user.admin?
