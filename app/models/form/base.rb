@@ -5,14 +5,10 @@ class Form::Base
   include ActiveModel::Validations::Callbacks
 
   def value_to_boolean(value)
-    
-    
-          if value.is_a?(String) && value.empty?
-            nil
-          else
-            ['1'].include?(value)
-          end
+    if ['1'].include?(value)
+      true
+    else
+      nil
+    end
   end
-    # ActiveRecord::ConnectionAdapters::Column.value_to_boolean(value)
-  
 end
