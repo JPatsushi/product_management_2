@@ -33,4 +33,5 @@ Rails.application.routes.draw do
   patch '/monthly_authentications', to: 'monthly_authentications#monthly_update'
   
   resources :products, only: [:new, :create]
+  resources :people
 end

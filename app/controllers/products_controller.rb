@@ -16,7 +16,6 @@ class ProductsController < ApplicationController
   private
 
   def product_collection_params
-    binding.pry
     params
       .require(:form_product_collection)
       .permit(products_attributes: Form::Product::REGISTRABLE_ATTRIBUTES)

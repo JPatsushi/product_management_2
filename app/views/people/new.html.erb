@@ -1,0 +1,9 @@
+<%= form_for @person do |person_form| %>
+  
+  <%= person_form.fields_for :adress do |address_fields| %>
+    Street  : <%= address_fields.text_field :street %>
+    Zip code: <%= address_fields.text_field :zip_code %>
+    Delete: <%= address_fields.check_box :_destroy %>
+  <% end %>
+  
+<% end %>

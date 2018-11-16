@@ -6,8 +6,6 @@ class TimeCardsController < ApplicationController
   
   def show
     
-    @person = TimeCard::Person.new(name: 'bob', age: '18')
-    
     @user = User.find(params[:id])
     if params[:year] && params[:month]
       @year = params[:year].to_i
