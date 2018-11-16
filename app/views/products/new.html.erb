@@ -13,25 +13,25 @@
 <tbody class="bulk-registration-form">
 <%= fb.fields_for :products do |f| %>
   <tr class="item">
-  <td class="text-center">
-  <%= f.check_box :register, class: 'top10 registration-checkbox' %>
-  </td>
-  <td>
-  <%= f.text_field :code, class: 'form-control' %>
-  </td>
-  <td>
-  <%= f.text_field :name, class: 'form-control' %>
-  </td>
-  <td>
-  <%= f.text_field :name_kana, class: 'form-control' %>
-  </td>
-  <td>
-  <%= f.text_field :price, class: 'form-control' %>
-  </td>
-  <td>
-  <%= f.text_field :purchase_cost, class: 'form-control' %>
-  </td>
-</tr>
+    <td class="text-center">
+      <%= f.check_box :register, class: 'top10 registration-checkbox' %>
+    </td>
+    <td>
+      <%= f.text_field :code, class: 'form-control' %>
+    </td>
+    <td>
+      <%= f.text_field :name, class: 'form-control' %>
+    </td>
+    <td>
+      <%= f.text_field :name_kana, class: 'form-control' %>
+    </td>
+    <td>
+      <%= f.text_field :price, class: 'form-control' %>
+    </td>
+    <td>
+      <%= f.text_field :purchase_cost, class: 'form-control' %>
+    </td>
+  </tr>
 <% end %>
 </tbody>
 </table>

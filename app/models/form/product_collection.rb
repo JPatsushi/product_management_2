@@ -9,13 +9,11 @@ class Form::ProductCollection < Form::Base
 
   def products_attributes=(attributes)
     self.products = attributes.map do |_, product_attributes|
-      # byebug
       Form::Product.new(product_attributes).tap { |v| v.availability = false }
     end
   end
 
   def valid?
-    # byebug
     valid_products = target_products.map(&:valid?).all?
     super && valid_products
   end
