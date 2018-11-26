@@ -1,5 +1,19 @@
 class ProductsController < ApplicationController
   
+  #サーチフォーム
+  def index
+    @product = Search::Product.new
+  end
+
+  def search
+    @product = Search::Product.new(search_params)
+    @products = @product
+      .matches
+      .order(availability: :desc, code: :asc)
+      .decorate
+  end
+  
+  #一括変更
   def new
     @form = Form::ProductCollection.new
   end
@@ -20,4 +34,10 @@ class ProductsController < ApplicationController
       .require(:form_product_collection)
       .permit(products_attributes: Form::Product::REGISTRABLE_ATTRIBUTES)
   end  
+  
+  def search_params
+    params
+      .require(:search_product)
+      .permit(Search::Product::ATTRIBUTES)
+  end
 end
