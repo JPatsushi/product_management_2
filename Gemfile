@@ -17,6 +17,7 @@ gem 'turbolinks',   '5.0.1'
 gem 'jbuilder',     '2.7.0'
 gem 'ransack',      '2.0.0'
 gem 'draper'
+gem "cocoon"
 
 #github alerts
 gem "loofah", ">= 2.2.3"

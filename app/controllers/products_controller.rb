@@ -1,22 +1,35 @@
 class ProductsController < ApplicationController
   
   #サーチフォーム
+  # def index
+  #   @product = Search::Product.new
+  # end
+  
   def index
-    @product = Search::Product.new
+    @q = Product.search
   end
-
+  
+  #サーチフォーム
+  # def search
+  #   @product = Search::Product.new(search_params)
+  #   @products = @product
+  #     .matches
+  #     .order(availability: :desc, code: :asc)
+  #     .decorate
+  # end
+  
   def search
-    @product = Search::Product.new(search_params)
-    @products = @product
-      .matches
+    @q = Product.search(search_params)
+    @products = @q
+      .result
       .order(availability: :desc, code: :asc)
       .decorate
   end
   
   #一括変更
-  def new
-    @form = Form::ProductCollection.new
-  end
+  # def new
+  #   @form = Form::ProductCollection.new
+  # end
 
   def create
     @form = Form::ProductCollection.new(product_collection_params)
@@ -35,9 +48,18 @@ class ProductsController < ApplicationController
       .permit(products_attributes: Form::Product::REGISTRABLE_ATTRIBUTES)
   end  
   
+  #サーチフォーム
+  # def search_params
+  #   params
+  #     .require(:search_product)
+  #     .permit(Search::Product::ATTRIBUTES)
+  # end
+  
   def search_params
-    params
-      .require(:search_product)
-      .permit(Search::Product::ATTRIBUTES)
+    search_conditions = %i(
+      code_cont name_cont name_kana_cont availability_true
+      price_gteq price_lteq purchase_cost_gteq purchase_cost_lteq
+    )
+    params.require(:q).permit(search_conditions)
   end
 end

@@ -39,4 +39,10 @@ Rails.application.routes.draw do
   end
   
   resources :people
+  
+  resources :orders do
+    collection do
+      get :search
+    end
+  end
 end
