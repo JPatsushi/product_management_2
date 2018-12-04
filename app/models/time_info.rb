@@ -1,2 +1,0 @@
-class TimeInfo < ApplicationRecord
-end
