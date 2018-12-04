@@ -26,22 +26,24 @@ class ProductsController < ApplicationController
       .decorate
   end
   
-  #一括変更
+  # 一括変更
   # def new
   #   @form = Form::ProductCollection.new
   # end
 
-  def create
-    @form = Form::ProductCollection.new(product_collection_params)
-    if @form.save
-      redirect_to new_product_path, notice: "#{@form.target_products.size}件の商品を登録しました。"
-    else
-      render :new
-    end
-  end
+  # 一括変更
+  # def create
+  #   @form = Form::ProductCollection.new(product_collection_params)
+  #   if @form.save
+  #     redirect_to new_product_path, notice: "#{@form.target_products.size}件の商品を登録しました。"
+  #   else
+  #     render :new
+  #   end
+  # end
 
   private
 
+  # 一括変更
   def product_collection_params
     params
       .require(:form_product_collection)
