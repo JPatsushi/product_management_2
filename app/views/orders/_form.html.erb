@@ -20,6 +20,7 @@
     <hr>
     <b>受注明細</b>
     <div class="text-right">
+      
       <%= link_to_add_association '明細を追加', f, :order_details,
         class: 'btn btn-default',
         data: {
@@ -40,11 +41,13 @@
     </thead>
 
     <tbody id='detail-association-insertion-point'>
-    <div class="form-group">
-    <%= f.fields_for :order_details do |od| %>
-      <%= render 'order_detail_fields', f: od %>
-    <% end %>
-    </div>
+      
+        <div class="form-group">
+        <%= f.fields_for :order_details do |od| %>
+          <%= render 'order_detail_fields', f: od %>
+        <% end %>
+        </div>
+        
     </tbody>
     </table>
 
@@ -52,6 +55,7 @@
 
     <div class="col-sm-9">
     </div>
+    
     <div class="col-sm-3">
       <div class="form-group">
         <label class="control-label" for="">受注額合計</label>
@@ -60,6 +64,8 @@
           value: number_to_currency(f.object.price) %>
       </div>
     </div>
+    
+    
   </div>
   <div class="text-center">
   <%= f.submit '登録', class: 'btn btn-primary' %>

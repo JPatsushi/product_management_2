@@ -26,27 +26,8 @@ ActiveRecord::Schema.define(version: 20181128034809) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "locations", force: :cascade do |t|
-    t.integer "lo_number"
-    t.string "lo_name"
-    t.string "lo_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "monthly_authentications", force: :cascade do |t|
-    t.string "year"
-    t.string "month"
-    t.integer "certifier"
-    t.integer "user_id"
-    t.string "content"
-    t.string "status", default: "未"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "order_details", force: :cascade do |t|
-    t.integer "order_id", null: false
+    t.integer "order_id"
     t.integer "product_id", null: false
     t.integer "unit_price", null: false
     t.integer "quantity", null: false
@@ -81,32 +62,6 @@ ActiveRecord::Schema.define(version: 20181128034809) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "time_cards", force: :cascade do |t|
-    t.integer "year"
-    t.integer "month"
-    t.integer "day"
-    t.datetime "in_at"
-    t.datetime "out_at"
-    t.integer "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "remark"
-    t.datetime "over_work"
-    t.string "content"
-    t.integer "certifer"
-    t.string "status"
-    t.integer "change_certifier"
-    t.datetime "tmp_in_at"
-    t.datetime "tmp_out_at"
-  end
-
-  create_table "time_infos", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "must_work_time"
-    t.datetime "sd_work_time"
-  end
-
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -120,7 +75,6 @@ ActiveRecord::Schema.define(version: 20181128034809) do
     t.datetime "activated_at"
     t.string "reset_digest"
     t.datetime "reset_sent_at"
-    t.string "depart"
     t.boolean "superior", default: false
     t.integer "employee_number"
     t.string "uid"
