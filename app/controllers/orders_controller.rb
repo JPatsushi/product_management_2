@@ -6,7 +6,9 @@ class OrdersController < ApplicationController
   end
 
   def search
+    #byebug
     @q = Order.search(search_params)
+    #byebug
     @orders = @q.result.preload(:corporation)
   end
 
@@ -15,6 +17,7 @@ class OrdersController < ApplicationController
   end
 
   def edit
+    #byebug
     @order = Form::Order.find(params[:id])
   end
 
@@ -28,6 +31,7 @@ class OrdersController < ApplicationController
   end
 
   def update
+    #byebug
     if @order.update_attributes(order_params)
       redirect_to orders_path, notice: "受注 #{@order.name} を更新しました。"
     else
