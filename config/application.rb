@@ -22,5 +22,7 @@ module SampleApp
     # -- all .rb files in that directory are automatically loaded.
     # 認証トークンをremoteフォームに埋め込む
     config.action_view.embed_authenticity_token_in_remote_forms = true
+    #validators
+    config.autoload_paths += Dir["#{config.root}/app/models/validators"]
   end
 end
