@@ -51,6 +51,7 @@ class ProductsController < ApplicationController
   end
 
   def create
+    byebug
     @product = Form::Product.new(product_params)
     if @product.save
       redirect_to products_path, notice: "商品 #{@product.name} を登録しました。"
@@ -79,12 +80,18 @@ class ProductsController < ApplicationController
   end
 
   def product_params
-    params
+    # 1.4
+    # params
+    #   .require(:form_product)
+    #   .permit(
+    #     Form::Product::REGISTRABLE_ATTRIBUTES +
+    #     [product_categories_attributes: Form::ProductCategory::REGISTRABLE_ATTRIBUTES]
+    #   )
+     
+     #1.5  
+     params
       .require(:form_product)
-      .permit(
-        Form::Product::REGISTRABLE_ATTRIBUTES +
-        [product_categories_attributes: Form::ProductCategory::REGISTRABLE_ATTRIBUTES]
-      )
+      .permit(Form::Product::REGISTRABLE_ATTRIBUTES + Form::Product::REGISTRABLE_RELATIONS)
   end
 
   # 一括変更
