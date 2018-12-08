@@ -5,10 +5,42 @@ class ProductsController < ApplicationController
   #   @product = Search::Product.new
   # end
   
-  #(1.4)
+  #1.4
+  # def index
+  #   @q = Product.search
+  # end
+  
+  #1.5
   def index
-    @q = Product.search
+    @products = Product.all
   end
+  
+  def new
+    @product = Form::Product.new
+  end
+  
+  def edit
+    @product = Form::Product.find(params[:id])
+  end
+  
+  def create
+    @product = Form::Product.new(product_params)
+    if @product.save
+      redirect_to products_path, notice: "商品 #{@product.name} を登録しました。"
+    else
+      render :new
+    end
+  end
+  
+  def update
+    @product = Form::Product.find(params[:id])
+    if @product.update_attributes(product_params)
+      redirect_to products_path, notice: "商品 #{@product.name} を更新しました。"
+    else
+      render :edit
+    end
+  end
+  #/1.5
   
   #サーチフォーム
   # def search
@@ -42,34 +74,39 @@ class ProductsController < ApplicationController
   #   end
   # end
   
-  def new
-    @product = Form::Product.new
-  end
+  # def new
+  #   @product = Form::Product.new
+  # end
 
-  def edit
-    @product = Form::Product.find(params[:id])
-  end
+  # def edit
+  #   @product = Form::Product.find(params[:id])
+  # end
 
-  def create
-    byebug
-    @product = Form::Product.new(product_params)
-    if @product.save
-      redirect_to products_path, notice: "商品 #{@product.name} を登録しました。"
-    else
-      render :new
-    end
-  end
+  # def create
+  #   @product = Form::Product.new(product_params)
+  #   if @product.save
+  #     redirect_to products_path, notice: "商品 #{@product.name} を登録しました。"
+  #   else
+  #     render :new
+  #   end
+  # end
 
-  def update
-    @product = Form::Product.find(params[:id])
-    if @product.update_attributes(product_params)
-      redirect_to products_path, notice: "商品 #{@product.name} を更新しました。"
-    else
-      render :edit
-    end
-  end
+  # def update
+  #   @product = Form::Product.find(params[:id])
+  #   if @product.update_attributes(product_params)
+  #     redirect_to products_path, notice: "商品 #{@product.name} を更新しました。"
+  #   else
+  #     render :edit
+  #   end
+  # end
   
   private
+  
+  def product_params
+    params
+      .require(:form_product)
+      .permit(Form::Product::REGISTRABLE_ATTRIBUTES)
+  end
   
   def search_params
     search_conditions = %i(
@@ -79,7 +116,7 @@ class ProductsController < ApplicationController
     params.require(:q).permit(search_conditions)
   end
 
-  def product_params
+  # def product_params
     # 1.4
     # params
     #   .require(:form_product)
@@ -89,10 +126,10 @@ class ProductsController < ApplicationController
     #   )
      
      #1.5  
-     params
-      .require(:form_product)
-      .permit(Form::Product::REGISTRABLE_ATTRIBUTES + Form::Product::REGISTRABLE_RELATIONS)
-  end
+    # params
+    #   .require(:form_product)
+    #   .permit(Form::Product::REGISTRABLE_ATTRIBUTES + Form::Product::REGISTRABLE_RELATIONS)
+  # end
 
   # 一括変更
   # def product_collection_params

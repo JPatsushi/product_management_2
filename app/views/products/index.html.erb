@@ -6,10 +6,43 @@
 <!--  <#%= render 'search_form', f: f %>-->
 <!--<#% end %>-->
 
+<!--1.5-->
+<!--<%# content_for(:title) do %>-->
+<!--  商品検索-->
+<!--<%# end %>-->
+
+<!--<%#= search_form_for(@q, url: search_products_path, html: { method: :get, class: 'form-horizontal', role: 'form' }) do |f| %>-->
+<!--  <%#= render 'search_form', f: f %>-->
+<!--<%# end %>-->
+
+<!--1.6-->
 <% content_for(:title) do %>
-  商品検索
+  商品一覧
 <% end %>
 
-<%= search_form_for(@q, url: search_products_path, html: { method: :get, class: 'form-horizontal', role: 'form' }) do |f| %>
-  <%= render 'search_form', f: f %>
+<hr>
+
+<%= render layout: 'shared/search_result_box' do %>
+  <table class="table table-list ">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>商品名</th>
+      <th>入荷予定日</th>
+      <th>公開予定日時</th>
+      <th></th>
+    </tr>
+  </thead>
+  <% @products.each do |product| %>
+  <tbody>
+  <tr>
+    <td><%= product.id %></td>
+    <td><%= product.name %></td>
+    <td><%= product.arrival_date %></td>
+    <td><%= product.published_at %></td>
+    <td><%= link_to '編集', edit_product_path(product), class: 'btn btn-default' %></td>
+  </tr>
+  </tbody>
+<% end %>
+</table>
 <% end %>
