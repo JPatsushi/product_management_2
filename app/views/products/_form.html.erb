@@ -21,9 +21,16 @@
     <%= f.text_field :arrival_date, class: 'form-control date-picker' %>
   </div>
   
+  <!--<div class="form-group form-inline">-->
+  <!--  <label class="control-label" for="">商品公開予定日時</label>-->
+  <!--  <%#= f.datetime_select :published_at, {}, class: 'form-control' %>-->
+  <!--</div>-->
+  
   <div class="form-group form-inline">
     <label class="control-label" for="">商品公開予定日時</label>
-    <%= f.datetime_select :published_at, {}, class: 'form-control' %>
+    <%= f.text_field :published_at_date, class: 'form-control date-picker' %>
+    <%= f.select :published_at_hour, (0..23).to_a.map { |v| "%02d" % v }, {}, class: 'form-control' %> :
+    <%= f.select :published_at_minute, (0..59).to_a.map { |v| "%02d" % v }, {}, class: 'form-control' %>
   </div>
   </div>  
   
