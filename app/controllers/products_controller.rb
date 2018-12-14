@@ -10,10 +10,15 @@ class ProductsController < ApplicationController
   #   @q = Product.search
   # end
   
-  #1.5
+  #2.2
   def index
-    @products = Product.all
+    @q = Product.search
   end
+  
+  #1.5
+  # def index
+  #   @products = Product.all
+  # end
   
   def new
     @product = Form::Product.new
@@ -51,12 +56,26 @@ class ProductsController < ApplicationController
   #     .decorate
   # end
   
+  # def search
+  #   @q = Product.search(search_params)
+  #   @products = @q
+  #     .result
+  #     .order(availability: :desc, code: :asc)
+  #     .decorate
+  # end
+  
+  #2.2
   def search
     @q = Product.search(search_params)
     @products = @q
       .result
       .order(availability: :desc, code: :asc)
       .decorate
+    if params[:export_csv]
+      send_data @products.to_csv, filename: "#{Time.current.strftime('%Y%m%d')}.csv"
+    else
+      render :search
+    end
   end
   
   # 一括変更
