@@ -17,4 +17,6 @@ class Product < ApplicationRecord
   #1.6
   validates :arrival_date, presence: true
   validates :published_at , presence: true
+  
+  include CsvExportable
 end

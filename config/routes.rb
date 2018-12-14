@@ -36,6 +36,10 @@ Rails.application.routes.draw do
     collection do
       get :search
     end
+    
+    collection do
+      get :export_csv
+    end
   end
   
   resources :people

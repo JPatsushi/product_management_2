@@ -100,6 +100,11 @@ class ProductsController < ApplicationController
   #   end
   # end
   
+  def export_csv
+    @products = Product.all
+    send_data @products.to_csv, filename: "#{Time.current.strftime('%Y%m%d')}.csv"
+  end
+  
   private
   
   def product_params
