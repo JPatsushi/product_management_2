@@ -1,3 +1,12 @@
+#2.2_B
+class CsvExportConstraint
+  def self.matches?(request)
+    request.params.has_key?(:export_csv)
+  end
+end
+
+
+
 Rails.application.routes.draw do
   root 'static_pages#home'
   get  '/help',    to: 'static_pages#help'
@@ -33,13 +42,21 @@ Rails.application.routes.draw do
   patch '/monthly_authentications', to: 'monthly_authentications#monthly_update'
   
   resources :products do
+    # collection do
+    #   get :search
+    # end
+    
+    # collection do
+    #   get :export_csv
+    # end
+    
+    #2.2_B
     collection do
+      get :search, action: :export_csv, constraints: CsvExportConstraint
       get :search
     end
     
-    collection do
-      get :export_csv
-    end
+    
   end
   
   resources :people
